@@ -26,11 +26,11 @@ class InfoViewController: UIViewController {
         let alert = UIAlertController(title: "Внимание", message: "Продолжить?", preferredStyle: .alert)
         
         let okAction = UIAlertAction(title: "Да", style: .default) { _ in
-            print("Нажато Да")
+            print("Да")
         }
         
         let cancelAction = UIAlertAction(title: "Нет", style: .cancel) { _ in
-            print("Нажато Нет")
+            print("Нет")
         }
         
         alert.addAction(okAction)
