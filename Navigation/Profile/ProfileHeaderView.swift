@@ -9,22 +9,15 @@ import UIKit
 
 class ProfileHeaderView: UIView {
 
-    // Фон
-    private let headerBackgroundView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .lightGray
-        return view
-    }()
-
     private let avatarImageView: UIImageView = {
         let imageView = UIImageView()
-        //imageView.image = UIImage(systemName: "person.crop.circle.fill")
         imageView.image = UIImage(named: "Cat")
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 60
+        imageView.layer.cornerRadius = 50 // Уменьшим немного для высоты 220
         imageView.layer.borderWidth = 3
         imageView.layer.borderColor = UIColor.white.cgColor
         imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
 
@@ -32,101 +25,87 @@ class ProfileHeaderView: UIView {
         let label = UILabel()
         label.text = "Кошка"
         label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
-        label.textColor = .black
-        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
     private let statusLabel: UILabel = {
         let label = UILabel()
-        label.text = "Спит"
+        label.text = "В ожидании..."
         label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         label.textColor = .gray
-        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+
+    private let statusTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Статус"
+        textField.backgroundColor = .white
+        textField.layer.cornerRadius = 12
+        textField.layer.borderWidth = 1
+        textField.layer.borderColor = UIColor.black.cgColor
+        textField.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)) // Отступ текста
+        textField.leftViewMode = .always
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        return textField
     }()
 
     private let setStatusButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Статус", for: .normal)
+        button.setTitle("Установить статус", for: .normal)
         button.backgroundColor = .systemBlue
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 4
-        
-        // Тень
-        button.layer.shadowOffset = CGSize(width: 4, height: 4)
-        button.layer.shadowRadius = 4
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.7
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .white
-        
-        // сабвью
-        addSubview(headerBackgroundView)
-        addSubview(avatarImageView)
-        addSubview(fullNameLabel)
-        addSubview(statusLabel)
-        addSubview(setStatusButton)
-        
-        // Обработка
-        setStatusButton.addTarget(self, action: #selector(buttonPressed), for: .touchUpInside)
+        backgroundColor = .lightGray
+        setupSubviews()
     }
 
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) error")
+        fatalError("ошибка инициализации")
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        // 1. Получаем отступ safeArea
-        let topPadding = self.safeAreaInsets.top
-        let screenWidth = self.bounds.width
-        
-        // 2. Аватарка
-        avatarImageView.frame = CGRect(x: 16, y: topPadding + 16, width: 120, height: 120)
-        
-        // 3. Имя
-        fullNameLabel.sizeToFit() // Рассчитываем размер текста
-        fullNameLabel.frame = CGRect(
-            x: (screenWidth - fullNameLabel.frame.width) / 2,
-            y: topPadding + 27,
-            width: fullNameLabel.frame.width,
-            height: fullNameLabel.frame.height
-        )
-        
-        // 4. Кнопка
-        let buttonWidth = screenWidth - 32
-        setStatusButton.frame = CGRect(
-            x: 16,
-            y: avatarImageView.frame.maxY + 16,
-            width: buttonWidth,
-            height: 50
-        )
-        
-        // 5. Статус
-        statusLabel.sizeToFit()
-        statusLabel.frame = CGRect(
-            x: (screenWidth - statusLabel.frame.width) / 2,
-            y: setStatusButton.frame.minY - 34 - statusLabel.frame.height,
-            width: statusLabel.frame.width,
-            height: statusLabel.frame.height
-        )
-        
-        // 6. Серый фон
-        headerBackgroundView.frame = CGRect(
-            x: 0,
-            y: 0,
-            width: screenWidth,
-            height: setStatusButton.frame.maxY + 16
-        )
-    }
+    private func setupSubviews() {
+        addSubview(avatarImageView)
+        addSubview(fullNameLabel)
+        addSubview(statusLabel)
+        addSubview(statusTextField)
+        addSubview(setStatusButton)
 
-    @objc func buttonPressed() {
-        print("Текущий статус: \(statusLabel.text ?? "")")
+        NSLayoutConstraint.activate([
+            // Аватарка
+            avatarImageView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            avatarImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            avatarImageView.widthAnchor.constraint(equalToConstant: 100),
+            avatarImageView.heightAnchor.constraint(equalToConstant: 100),
+
+            // Имя
+            fullNameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 27),
+            fullNameLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 16),
+            fullNameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+
+            // Кнопка
+            setStatusButton.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 16),
+            setStatusButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            setStatusButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            setStatusButton.heightAnchor.constraint(equalToConstant: 50),
+
+            // Статус
+            statusLabel.leadingAnchor.constraint(equalTo: fullNameLabel.leadingAnchor),
+            statusLabel.bottomAnchor.constraint(equalTo: statusTextField.topAnchor, constant: -10),
+
+            // Поле ввода статуса
+            statusTextField.leadingAnchor.constraint(equalTo: fullNameLabel.leadingAnchor),
+            statusTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            statusTextField.heightAnchor.constraint(equalToConstant: 40),
+            statusTextField.bottomAnchor.constraint(equalTo: setStatusButton.topAnchor, constant: -10)
+        ])
     }
 }
