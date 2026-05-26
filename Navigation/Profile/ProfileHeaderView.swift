@@ -52,33 +52,43 @@ class ProfileHeaderView: UIView {
         return textField
     }()
 
-    private let setStatusButton: UIButton = {
+    let setStatusButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Новый статус", for: .normal)
         button.backgroundColor = .systemBlue
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 4
+        // тень
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 4, height: 4)
+        button.layer.shadowRadius = 4
+        button.layer.shadowOpacity = 0.7
+        button.layer.masksToBounds = false
+        
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .lightGray
+        loadSubviews()
         setupSubviews()
     }
 
     required init?(coder: NSCoder) {
         fatalError("ошибка инициализации")
     }
-
-    private func setupSubviews() {
+    
+    private func loadSubviews() {
         addSubview(avatarImageView)
         addSubview(fullNameLabel)
         addSubview(statusLabel)
         addSubview(statusTextField)
         addSubview(setStatusButton)
+    }
 
+    private func setupSubviews() {
         NSLayoutConstraint.activate([
             // Аватарка
             avatarImageView.topAnchor.constraint(equalTo: topAnchor, constant: 16),

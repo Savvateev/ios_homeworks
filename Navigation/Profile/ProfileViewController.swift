@@ -9,7 +9,7 @@ import UIKit
 
 class ProfileViewController: UIViewController {
 
-    private let profileHeaderView: ProfileHeaderView = {
+    private var profileHeaderView: ProfileHeaderView = {
         let view = ProfileHeaderView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -32,6 +32,7 @@ class ProfileViewController: UIViewController {
     }
 
     private func setupLayout() {
+
         view.addSubview(profileHeaderView)
         view.addSubview(bottomButton)
 
@@ -48,4 +49,5 @@ class ProfileViewController: UIViewController {
             bottomButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
+
 }
