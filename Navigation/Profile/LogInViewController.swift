@@ -90,7 +90,7 @@ class LoginViewController: UIViewController {
         let button = UIButton()
         button.setTitle("Log In", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.addTarget(LoginViewController.self, action: #selector(loginButtonTouch), for: .touchUpInside)
+        button.addTarget(self, action: #selector(loginButtonTouch), for: .touchUpInside)
         
         // Настройка фона через изображение
         if let pixelImage = UIImage(named: "blue_pixel") {
@@ -106,9 +106,16 @@ class LoginViewController: UIViewController {
     }()
 
     @objc private func loginButtonTouch() {
-        print("Кнопка login нажата")
-        
+        //print("Кнопка login нажата")
+        setupProfileLayout()
     }
+    
+    private func setupProfileLayout() {
+        let profileVC = ProfileViewController()
+        navigationController?.pushViewController(profileVC, animated: true)
+        print("Кнопка login нажата")
+    }
+    
     
     // Lifecycle
     

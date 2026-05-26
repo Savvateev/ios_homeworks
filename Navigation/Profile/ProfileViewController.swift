@@ -8,12 +8,6 @@
 import UIKit
 
 class ProfileViewController: UIViewController {
-    
-    private var profileLoginView: LoginViewController = {
-        let view = LoginViewController()
-        //view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
 
     private var profileHeaderView: ProfileHeaderView = {
         let view = ProfileHeaderView()
@@ -34,15 +28,9 @@ class ProfileViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         title = "Профиль"
-        setupLoginLayout()
-        //setupLayout()
+        setupLayout()
     }
 
-    private func setupLoginLayout() {
-        let loginVC = LoginViewController()
-        navigationController?.pushViewController(loginVC, animated: true)
-    }
-    
     private func setupLayout() {
 
         view.addSubview(profileHeaderView)
