@@ -52,11 +52,12 @@ class ProfileHeaderView: UIView {
         return textField
     }()
 
-    let setStatusButton: UIButton = {
+    private let setStatusButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Новый статус", for: .normal)
         button.backgroundColor = .systemBlue
         button.setTitleColor(.white, for: .normal)
+        button.addTarget(ProfileHeaderView.self, action: #selector(statusButtonTouch), for: .touchUpInside)
         button.layer.cornerRadius = 4
         // тень
         button.layer.shadowColor = UIColor.black.cgColor
@@ -68,6 +69,11 @@ class ProfileHeaderView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    
+    @objc private func statusButtonTouch() {
+        print("Кнопка новый статус нажата")
+        
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
