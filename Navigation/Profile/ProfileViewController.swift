@@ -28,9 +28,14 @@ class ProfileViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         title = "Профиль"
-        setupLayout()
+        setupLoginLayout()
+        //setupLayout()
     }
 
+    private func setupLoginLayout() {
+        
+    }
+    
     private func setupLayout() {
 
         view.addSubview(profileHeaderView)
