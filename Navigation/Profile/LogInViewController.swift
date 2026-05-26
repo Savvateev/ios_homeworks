@@ -90,6 +90,7 @@ class LoginViewController: UIViewController {
         let button = UIButton()
         button.setTitle("Log In", for: .normal)
         button.setTitleColor(.white, for: .normal)
+        button.addTarget(LoginViewController.self, action: #selector(loginButtonTouch), for: .touchUpInside)
         
         // Настройка фона через изображение
         if let pixelImage = UIImage(named: "blue_pixel") {
@@ -104,11 +105,17 @@ class LoginViewController: UIViewController {
         return button
     }()
 
+    @objc private func loginButtonTouch() {
+        print("Кнопка login нажата")
+        
+    }
+    
     // Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        self.navigationController?.isNavigationBarHidden = true
         setupLayout()
     }
 
