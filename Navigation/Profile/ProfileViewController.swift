@@ -9,45 +9,50 @@ import UIKit
 
 class ProfileViewController: UIViewController {
 
-    private var profileHeaderView: ProfileHeaderView = {
-        let view = ProfileHeaderView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+        private lazy var tableView: UITableView = {
+            let tableView = UITableView(frame: .zero, style: .grouped)
+            tableView.translatesAutoresizingMaskIntoConstraints = false
+            tableView.dataSource = self
+            tableView.delegate = self
+            // Регистрация ячейки
+            tableView.register(PostTableViewCell.self, forCellReuseIdentifier: "PostCell")
+            return tableView
+        }()
 
-    private let bottomButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Кнопка", for: .normal)
-        button.backgroundColor = .systemGreen
-        button.setTitleColor(.white, for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            view.backgroundColor = .white
+            setupTableView()
+        }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .white
-        title = "Профиль"
-        setupLayout()
+        private func setupTableView() {
+            view.addSubview(tableView)
+            NSLayoutConstraint.activate([
+                tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            ])
+        }
     }
 
-    private func setupLayout() {
+    extension ProfileViewController: UITableViewDataSource {
+        func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+            return posts.count // Используем ваш массив
+        }
 
-        view.addSubview(profileHeaderView)
-        view.addSubview(bottomButton)
-
-        NSLayoutConstraint.activate([
-        
-            profileHeaderView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            profileHeaderView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            profileHeaderView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            profileHeaderView.heightAnchor.constraint(equalToConstant: 220),
-
-            bottomButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            bottomButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bottomButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            bottomButton.heightAnchor.constraint(equalToConstant: 50)
-        ])
+        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as! PostTableViewCell
+            let post = posts[indexPath.row]
+            cell.configure(with: post)
+            return cell
+        }
     }
 
-}
+    extension ProfileViewController: UITableViewDelegate {
+        func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+            return UITableView.automaticDimension
+        }
+    }
+
+
