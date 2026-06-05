@@ -8,6 +8,8 @@
 import UIKit
 
 class ProfileViewController: UIViewController {
+    
+    private let profileHeaderView = ProfileHeaderView()
 
         private lazy var tableView: UITableView = {
             let tableView = UITableView(frame: .zero, style: .grouped)
@@ -38,7 +40,7 @@ class ProfileViewController: UIViewController {
 
     extension ProfileViewController: UITableViewDataSource {
         func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            return posts.count // Используем ваш массив
+            return posts.count
         }
 
         func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -46,6 +48,18 @@ class ProfileViewController: UIViewController {
             let post = posts[indexPath.row]
             cell.configure(with: post)
             return cell
+        }
+        
+        func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+            // Возвращаем вью только для нулевой секции
+            return section == 0 ? profileHeaderView : nil
+        }
+
+        func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+            if section == 0 {
+                return UITableView.automaticDimension
+            }
+            return 0
         }
     }
 
