@@ -5,7 +5,7 @@ class PostViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemPink
-        title = posts[0].description
+        title = "Текст поста"
         setupBarButton()
     }
     

@@ -54,5 +54,3 @@ class ProfileViewController: UIViewController {
             return UITableView.automaticDimension
         }
     }
-
-
