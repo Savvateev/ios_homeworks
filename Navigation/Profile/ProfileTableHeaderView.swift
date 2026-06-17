@@ -8,6 +8,8 @@
 import UIKit
 
 class ProfileHeaderView: UIView {
+    
+    //UI  элементы
 
     private let avatarImageView: UIImageView = {
         let imageView = UIImageView()
@@ -78,15 +80,19 @@ class ProfileHeaderView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .lightGray
-        loadSubviews()
-        setupSubviews()
+        setupLayout()
     }
 
     required init?(coder: NSCoder) {
         fatalError("ошибка инициализации")
     }
     
-    private func loadSubviews() {
+    private func setupLayout() {
+        setupHierarchy()
+        setupConstraints()
+    }
+    
+    private func setupHierarchy() {
         addSubview(avatarImageView)
         addSubview(fullNameLabel)
         addSubview(statusLabel)
@@ -94,7 +100,7 @@ class ProfileHeaderView: UIView {
         addSubview(setStatusButton)
     }
 
-    private func setupSubviews() {
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             // Аватарка
             avatarImageView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
@@ -112,6 +118,7 @@ class ProfileHeaderView: UIView {
             setStatusButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             setStatusButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             setStatusButton.heightAnchor.constraint(equalToConstant: 50),
+            setStatusButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -16),
 
             // Статус
             statusLabel.leadingAnchor.constraint(equalTo: fullNameLabel.leadingAnchor),

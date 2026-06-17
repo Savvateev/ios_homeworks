@@ -9,7 +9,8 @@ import UIKit
 
 class PostTableViewCell: UITableViewCell {
     
-    // Элементы интерфейса
+    // UI элементы
+    
     private let authorLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16, weight: .bold)
@@ -69,12 +70,19 @@ class PostTableViewCell: UITableViewCell {
     }
 
     private func setupLayout() {
+        setupHierarchy()
+        setupConstraints()
+    }
+    
+    private func setupHierarchy() {
         contentView.addSubview(authorLabel)
         contentView.addSubview(postImageView)
         contentView.addSubview(descriptionLabel)
         contentView.addSubview(likesLabel)
         contentView.addSubview(viewsLabel)
-        
+    }
+    
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             authorLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             authorLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
