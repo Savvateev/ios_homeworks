@@ -81,18 +81,17 @@ class PhotosTableViewCell: UITableViewCell {
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             
-            // Ограничения для стрелки (центрирование по Y заголовка)
+            // для стрелки
             arrowImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
             arrowImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             arrowImageView.widthAnchor.constraint(equalToConstant: 24),
             
-            // Ограничения для галереи
+            // для галереи
             photosStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
             photosStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             photosStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             photosStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
-            
-            // Пропорция 1:4 (высота ячейки зависит от ширины, чтобы фото были квадратными)
+            // Пропорция 1:4
             photosStackView.heightAnchor.constraint(equalTo: photosStackView.widthAnchor, multiplier: 0.25, constant: -6)
         ])
     }
