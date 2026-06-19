@@ -2,6 +2,8 @@ import UIKit
 
 class ProfileViewController: UIViewController {
     
+    // MARK: - UI Elements
+    
     private let profileHeaderView: ProfileHeaderView = {
         let header = ProfileHeaderView()
         header.backgroundColor = .systemGray6
@@ -14,10 +16,14 @@ class ProfileViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.delegate = self
+        
+        // Регистрация
         tableView.register(PostTableViewCell.self, forCellReuseIdentifier: "PostCell")
+        tableView.register(PhotosTableViewCell.self, forCellReuseIdentifier: "PhotosCell")
+        
         return tableView
     }()
-
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -26,7 +32,14 @@ class ProfileViewController: UIViewController {
         setupLayout()
     }
 
-    // MARK: - Setup Methods (Decomposed)
+    private func pushPhotosViewController() {
+        let photosVC = PhotosViewController()
+        
+        // Выполняем переход с помощью push
+        navigationController?.pushViewController(photosVC, animated: true)
+    }
+    
+    // MARK: - Private Methods
     
     private func setupLayout() {
         setupHierarchy()
@@ -47,21 +60,34 @@ class ProfileViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDataSource
+
 extension ProfileViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2 // Секция 0 для профиля, Секция 1 для постов
+        return 3 // 0: Profile, 1: Photos, 2: Posts
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // В секции с профилем 0 строк, чтобы посты начались сразу под заголовком
-        return section == 0 ? 0 : posts.count
+        switch section {
+        case 0: return 0            // Только хедер
+        case 1: return 1            // Одна ячейка PhotosTableViewCell
+        case 2: return posts.count  // Список постов
+        default: return 0
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as! PostTableViewCell
-        cell.configure(with: posts[indexPath.row])
-        return cell
+        if indexPath.section == 1 {
+            // Секция с фотографиями
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PhotosCell", for: indexPath) as! PhotosTableViewCell
+            return cell
+        } else {
+            // Секция с постами
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as! PostTableViewCell
+            cell.configure(with: posts[indexPath.row])
+            return cell
+        }
     }
 }
 
@@ -70,21 +96,34 @@ extension ProfileViewController: UITableViewDataSource {
 extension ProfileViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        // Устанавливаем профиль как заголовок только для нулевой секции
+        // Хедер отображаем только в самой первой секции
         return section == 0 ? profileHeaderView : nil
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == 0 {
-            // Чтобы профиль вошел полностью, используем автоматический расчет высоты
-            // (при условии, что внутри ProfileTableHeaderView настроен Auto Layout)
-            return UITableView.automaticDimension
-        }
-        return 0
+        return section == 0 ? UITableView.automaticDimension : 0
     }
     
-    // Подсказка для таблицы о примерной высоте профиля для корректного старта
     func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
         return section == 0 ? 220 : 0
     }
+    
+    // Убираем стандартные отступы между секциями для красоты
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0.1
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+            // Снимаем выделение
+            tableView.deselectRow(at: indexPath, animated: true)
+            
+            // Если нажата секция с фотографиями
+            if indexPath.section == 1 {
+                pushPhotosViewController()
+            }
+        }
 }
