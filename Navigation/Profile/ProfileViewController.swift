@@ -50,6 +50,11 @@ class ProfileViewController: UIViewController {
     // MARK: - Private Methods
     
     private func setupLayout() {
+#if DEBUG
+view.backgroundColor = .systemYellow
+#else
+view.backgroundColor = .systemBackground
+#endif
         setupHierarchy()
         setupConstraints()
     }
