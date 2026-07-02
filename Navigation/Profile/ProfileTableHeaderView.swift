@@ -1,42 +1,33 @@
-//
-//  ProfileHeaderView.swift
-//  Navigation
-//
-//  Created by Pavel Savvateev on 29.04.2026.
-//
-
 import UIKit
+import SnapKit // Не забудьте импортировать библиотеку
 
 class ProfileHeaderView: UIView {
     
-    //UI  элементы
+    // MARK: - UI Elements
 
     private let avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Cat")
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 50 // Уменьшим немного для высоты 220
+        imageView.layer.cornerRadius = 50
         imageView.layer.borderWidth = 3
         imageView.layer.borderColor = UIColor.white.cgColor
         imageView.clipsToBounds = true
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
 
     private let fullNameLabel: UILabel = {
         let label = UILabel()
         label.text = "Кошка"
-        label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 18, weight: .bold)
         return label
     }()
 
     private let statusLabel: UILabel = {
         let label = UILabel()
         label.text = "В ожидании..."
-        label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        label.font = .systemFont(ofSize: 14, weight: .regular)
         label.textColor = .gray
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -47,36 +38,35 @@ class ProfileHeaderView: UIView {
         textField.layer.cornerRadius = 12
         textField.layer.borderWidth = 1
         textField.layer.borderColor = UIColor.black.cgColor
-        textField.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)) // Отступ текста
+        textField.font = .systemFont(ofSize: 15, weight: .regular)
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
         textField.leftViewMode = .always
-        textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
 
-    private let setStatusButton: UIButton = {
+    private lazy var setStatusButton: UIButton = { // Используем lazy для корректного target self
         let button = UIButton(type: .system)
         button.setTitle("Новый статус", for: .normal)
         button.backgroundColor = .systemBlue
         button.setTitleColor(.white, for: .normal)
-        button.addTarget(ProfileHeaderView.self, action: #selector(statusButtonTouch), for: .touchUpInside)
+        button.addTarget(self, action: #selector(statusButtonTouch), for: .touchUpInside)
         button.layer.cornerRadius = 4
-        // тень
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOffset = CGSize(width: 4, height: 4)
         button.layer.shadowRadius = 4
         button.layer.shadowOpacity = 0.7
         button.layer.masksToBounds = false
-        
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
+    // MARK: - Actions
+
     @objc private func statusButtonTouch() {
         print("Кнопка новый статус нажата")
-        
     }
     
+    // MARK: - Init
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .lightGray
@@ -87,48 +77,47 @@ class ProfileHeaderView: UIView {
         fatalError("ошибка инициализации")
     }
     
+    // MARK: - Private Methods
+
     private func setupLayout() {
         setupHierarchy()
         setupConstraints()
     }
     
     private func setupHierarchy() {
-        addSubview(avatarImageView)
-        addSubview(fullNameLabel)
-        addSubview(statusLabel)
-        addSubview(statusTextField)
-        addSubview(setStatusButton)
+        // addSubview остается стандартным
+        [avatarImageView, fullNameLabel, statusLabel, statusTextField, setStatusButton].forEach { addSubview($0) }
     }
 
     private func setupConstraints() {
-        NSLayoutConstraint.activate([
-            // Аватарка
-            avatarImageView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            avatarImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            avatarImageView.widthAnchor.constraint(equalToConstant: 100),
-            avatarImageView.heightAnchor.constraint(equalToConstant: 100),
+        avatarImageView.snp.makeConstraints { make in
+            make.top.leading.equalToSuperview().offset(16)
+            make.size.equalTo(100) // ширина и высота сразу
+        }
 
-            // Имя
-            fullNameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 27),
-            fullNameLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 16),
-            fullNameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+        fullNameLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(27)
+            make.leading.equalTo(avatarImageView.snp.trailing).offset(16)
+            make.trailing.equalToSuperview().offset(-16)
+        }
 
-            // Кнопка
-            setStatusButton.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 16),
-            setStatusButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            setStatusButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            setStatusButton.heightAnchor.constraint(equalToConstant: 50),
-            setStatusButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -16),
+        setStatusButton.snp.makeConstraints { make in
+            make.top.equalTo(avatarImageView.snp.bottom).offset(16)
+            make.leading.trailing.equalToSuperview().inset(16) // отступ 16 с обеих сторон
+            make.height.equalTo(50)
+            make.bottom.equalToSuperview().offset(-16) // Важно для саморастягивающегося хедера
+        }
 
-            // Статус
-            statusLabel.leadingAnchor.constraint(equalTo: fullNameLabel.leadingAnchor),
-            statusLabel.bottomAnchor.constraint(equalTo: statusTextField.topAnchor, constant: -10),
+        statusTextField.snp.makeConstraints { make in
+            make.leading.equalTo(fullNameLabel.snp.leading)
+            make.trailing.equalToSuperview().offset(-16)
+            make.height.equalTo(40)
+            make.bottom.equalTo(setStatusButton.snp.top).offset(-10)
+        }
 
-            // Поле ввода статуса
-            statusTextField.leadingAnchor.constraint(equalTo: fullNameLabel.leadingAnchor),
-            statusTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            statusTextField.heightAnchor.constraint(equalToConstant: 40),
-            statusTextField.bottomAnchor.constraint(equalTo: setStatusButton.topAnchor, constant: -10)
-        ])
+        statusLabel.snp.makeConstraints { make in
+            make.leading.equalTo(fullNameLabel.snp.leading)
+            make.bottom.equalTo(statusTextField.snp.top).offset(-10)
+        }
     }
 }
