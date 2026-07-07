@@ -3,6 +3,8 @@ import StorageService
 
 class ProfileViewController: UIViewController {
     
+    var user: User?
+    
     // MARK: - UI Elements
     
     private let profileHeaderView: ProfileHeaderView = {
@@ -38,6 +40,7 @@ class ProfileViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupLayout()
+        setupUserInfo()
     }
 
     private func pushPhotosViewController() {
@@ -71,6 +74,12 @@ view.backgroundColor = .systemBackground
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
+    
+    private func setupUserInfo() {
+        guard let user = user else { return }
+        profileHeaderView.configure(with: user)
+    }
+    
 }
 
 // MARK: - UITableViewDataSource

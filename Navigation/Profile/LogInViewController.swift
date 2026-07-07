@@ -62,6 +62,15 @@ class LoginViewController: UIViewController {
         return button
     }()
 
+    private let userService: UserService = CurrentUserService(
+        user: User(
+            login: "user",
+            fullName: "Аксель Попартье",
+            avatar: UIImage(named: "Axel") ?? UIImage(),
+            status: "Hello, VK!"
+        )
+    )
+    
     // Lifecycle
     
     override func viewDidLoad() {
@@ -170,12 +179,35 @@ class LoginViewController: UIViewController {
     }
 
     // Actions
-    
+
     @objc private func loginButtonTouch() {
+        guard let loginText = loginTextField.text, !loginText.isEmpty else {
+            showAlert(title: "Ошибка", message: "Введите логин")
+            return
+        }
+        
+        guard let passwordText = passwordTextField.text, !passwordText.isEmpty else {
+            showAlert(title: "Ошибка", message: "Введите пароль")
+            return
+        }
+        
+        guard let user = userService.getUser(by: loginText) else {
+            showAlert(title: "Ошибка", message: "Неверный логин или пароль")
+            return
+        }
+        
         let profileVC = ProfileViewController()
+        profileVC.user = user
         navigationController?.pushViewController(profileVC, animated: true)
     }
 
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
+    }
+    
     // Keyboard Handling
     
     @objc func keyboardWillShow(notification: NSNotification) {

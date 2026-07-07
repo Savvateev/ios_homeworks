@@ -120,4 +120,12 @@ class ProfileHeaderView: UIView {
             make.bottom.equalTo(statusTextField.snp.top).offset(-10)
         }
     }
+    
+    func configure(with user: User) {
+        avatarImageView.image = user.avatar
+        fullNameLabel.text = user.fullName
+        statusLabel.text = user.status
+        statusTextField.text = user.status
+    }
+    
 }
