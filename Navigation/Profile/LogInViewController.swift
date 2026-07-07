@@ -61,15 +61,28 @@ class LoginViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
-    private let userService: UserService = CurrentUserService(
-        user: User(
-            login: "user",
-            fullName: "Аксель Попартье",
-            avatar: UIImage(named: "Axel") ?? UIImage(),
-            status: "Hello, VK!"
+    
+    private let userService: UserService = {
+#if DEBUG
+        return TestUserService(
+            user: User(
+                login: "test",
+                fullName: "Тестовый Пользователь",
+                avatar: UIImage(named: "test") ?? UIImage(),
+                status: "Debug Mode"
+            )
         )
-    )
+#else
+        return CurrentUserService(
+            user: User(
+                login: "user",
+                fullName: "Аксель Попартье",
+                avatar: UIImage(named: "Axel") ?? UIImage(),
+                status: "Hello, VK!"
+            )
+        )
+#endif
+    } ()
     
     // Lifecycle
     
@@ -85,12 +98,12 @@ class LoginViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self)
     }
-
+    
     // Setup
     
     private func setupLayout() {
@@ -177,9 +190,9 @@ class LoginViewController: UIViewController {
         
         return textField
     }
-
+    
     // Actions
-
+    
     @objc private func loginButtonTouch() {
         guard let loginText = loginTextField.text, !loginText.isEmpty else {
             showAlert(title: "Ошибка", message: "Введите логин")
@@ -200,7 +213,7 @@ class LoginViewController: UIViewController {
         profileVC.user = user
         navigationController?.pushViewController(profileVC, animated: true)
     }
-
+    
     private func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default)
@@ -220,7 +233,7 @@ class LoginViewController: UIViewController {
         scrollView.contentInset = contentInsets
         scrollView.scrollIndicatorInsets = contentInsets
     }
-
+    
     @objc func keyboardWillHide(notification: NSNotification) {
         scrollView.contentInset = .zero
         scrollView.scrollIndicatorInsets = .zero

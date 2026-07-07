@@ -24,3 +24,17 @@ public class CurrentUserService: UserService {
         return currentUser
     }
 }
+
+public class TestUserService: UserService {
+    
+    private let testUser: User
+    
+    public init(user: User) {
+        self.testUser = user
+    }
+    
+    public func getUser(by login: String) -> User? {
+        guard login == testUser.login else { return nil }
+        return testUser
+    }
+}
