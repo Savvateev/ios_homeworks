@@ -5,8 +5,6 @@ import iOSIntPackage
 
 class PostTableViewCell: UITableViewCell {
     
-    // MARK: - UI Elements
-    
     private let authorLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16, weight: .bold)
