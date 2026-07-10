@@ -62,6 +62,8 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    weak var loginDelegate: LoginViewControllerDelegate?
+
     private let userService: UserService = {
 #if DEBUG
         return TestUserService(
@@ -204,8 +206,18 @@ class LoginViewController: UIViewController {
             return
         }
         
-        guard let user = userService.getUser(by: loginText) else {
+        guard let loginDelegate = loginDelegate else {
+            showAlert(title: "Ошибка", message: "Сервис проверки недоступен")
+            return
+        }
+        
+        guard loginDelegate.check(login: loginText, password: passwordText) else {
             showAlert(title: "Ошибка", message: "Неверный логин или пароль")
+            return
+        }
+        
+        guard let user = userService.getUser(by: loginText) else {
+            showAlert(title: "Ошибка", message: "Пользователь не найден")
             return
         }
         
