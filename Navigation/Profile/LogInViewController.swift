@@ -62,31 +62,7 @@ class LoginViewController: UIViewController {
         return button
     }()
     
-    weak var loginDelegate: LoginViewControllerDelegate?
-
-    private let userService: UserService = {
-#if DEBUG
-        return TestUserService(
-            user: User(
-                login: "test",
-                fullName: "Тестовый Пользователь",
-                avatar: UIImage(named: "test") ?? UIImage(),
-                status: "Debug Mode"
-            )
-        )
-#else
-        return CurrentUserService(
-            user: User(
-                login: "user",
-                fullName: "Аксель Попартье",
-                avatar: UIImage(named: "Axel") ?? UIImage(),
-                status: "Hello, VK!"
-            )
-        )
-#endif
-    } ()
-    
-    // Lifecycle
+    var loginDelegate: LoginViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -216,13 +192,13 @@ class LoginViewController: UIViewController {
             return
         }
         
-        guard let user = userService.getUser(by: loginText) else {
-            showAlert(title: "Ошибка", message: "Пользователь не найден")
-            return
-        }
-        
         let profileVC = ProfileViewController()
-        profileVC.user = user
+        profileVC.user = User(
+            login: "test",
+            fullName: "Тестовый Пользователь",
+            avatar: UIImage(named: "test") ?? UIImage(),
+            status: "Debug Mode"
+        )
         navigationController?.pushViewController(profileVC, animated: true)
     }
     

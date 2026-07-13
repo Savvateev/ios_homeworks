@@ -12,8 +12,15 @@ final class Checker {
     
     static let shared = Checker()
     
-    private let login = "user"
-    private let password = "password"
+    private let login: String = {
+        #if DEBUG
+        return "test"
+        #else
+        return "user"
+        #endif
+    }()
+    
+    private let password = "111"
     
     private init() {}
     
