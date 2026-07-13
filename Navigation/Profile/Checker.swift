@@ -4,6 +4,10 @@ protocol LoginViewControllerDelegate: AnyObject {
     func check(login: String, password: String) -> Bool
 }
 
+protocol LoginFactory {
+    func makeLoginInspector() -> LoginInspector
+}
+
 final class Checker {
     
     static let shared = Checker()
@@ -24,5 +28,12 @@ final class LoginInspector: LoginViewControllerDelegate {
     
     func check(login: String, password: String) -> Bool {
         return checker.check(login: login, password: password)
+    }
+}
+
+struct MyLoginFactory: LoginFactory {
+    
+    func makeLoginInspector() -> LoginInspector {
+        return LoginInspector()
     }
 }
