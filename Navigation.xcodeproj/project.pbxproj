@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		544C5CD82FED265C00EC49C5 /* StorageService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 544C5CD02FED265B00EC49C5 /* StorageService.framework */; };
 		544C5CD92FED265C00EC49C5 /* StorageService.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 544C5CD02FED265B00EC49C5 /* StorageService.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		54D2E1CE2FF5FA9C00409AA7 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 54D2E1CD2FF5FA9C00409AA7 /* SnapKit */; };
-		54D2E1D12FF60DCB00409AA7 /* iOSIntPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 54D2E1D02FF60DCB00409AA7 /* iOSIntPackage */; };
+		549437F43014CCF600047F06 /* iOSIntPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 549437F33014CCF600047F06 /* iOSIntPackage */; };
+		549437F73014CD5C00047F06 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 549437F63014CD5C00047F06 /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +47,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+				Package.swift,
 			);
 			target = 547926F12F988973005399A9 /* Navigation */;
 		};
@@ -80,9 +81,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				54D2E1D12FF60DCB00409AA7 /* iOSIntPackage in Frameworks */,
+				549437F73014CD5C00047F06 /* SnapKit in Frameworks */,
 				544C5CD82FED265C00EC49C5 /* StorageService.framework in Frameworks */,
-				54D2E1CE2FF5FA9C00409AA7 /* SnapKit in Frameworks */,
+				549437F43014CCF600047F06 /* iOSIntPackage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -170,8 +171,8 @@
 			);
 			name = Navigation;
 			packageProductDependencies = (
-				54D2E1CD2FF5FA9C00409AA7 /* SnapKit */,
-				54D2E1D02FF60DCB00409AA7 /* iOSIntPackage */,
+				549437F33014CCF600047F06 /* iOSIntPackage */,
+				549437F63014CD5C00047F06 /* SnapKit */,
 			);
 			productName = Navigation;
 			productReference = 547926F22F988973005399A9 /* Navigation.app */;
@@ -205,8 +206,8 @@
 			mainGroup = 547926E92F988973005399A9;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				54D2E1CB2FF5595500409AA7 /* XCRemoteSwiftPackageReference "SnapKit" */,
-				54D2E1CF2FF60D5D00409AA7 /* XCRemoteSwiftPackageReference "iOSIntPackage" */,
+				5451E8063011BEDB00589737 /* XCLocalSwiftPackageReference "../../iOSIntPackage-imagepublisher" */,
+				549437F53014CD3500047F06 /* XCRemoteSwiftPackageReference "snapkit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 547926F32F988973005399A9 /* Products */;
@@ -553,35 +554,34 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		5451E8063011BEDB00589737 /* XCLocalSwiftPackageReference "../../iOSIntPackage-imagepublisher" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../iOSIntPackage-imagepublisher";
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
-		54D2E1CB2FF5595500409AA7 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+		549437F53014CD3500047F06 /* XCRemoteSwiftPackageReference "snapkit" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			repositoryURL = "https://github.com/snapkit/snapkit";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 6.0.0;
 			};
 		};
-		54D2E1CF2FF60D5D00409AA7 /* XCRemoteSwiftPackageReference "iOSIntPackage" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/TrueMax/iOSIntPackage";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.2.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		54D2E1CD2FF5FA9C00409AA7 /* SnapKit */ = {
+		549437F33014CCF600047F06 /* iOSIntPackage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 54D2E1CB2FF5595500409AA7 /* XCRemoteSwiftPackageReference "SnapKit" */;
-			productName = SnapKit;
-		};
-		54D2E1D02FF60DCB00409AA7 /* iOSIntPackage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 54D2E1CF2FF60D5D00409AA7 /* XCRemoteSwiftPackageReference "iOSIntPackage" */;
+			package = 5451E8063011BEDB00589737 /* XCLocalSwiftPackageReference "../../iOSIntPackage-imagepublisher" */;
 			productName = iOSIntPackage;
+		};
+		549437F63014CD5C00047F06 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 549437F53014CD3500047F06 /* XCRemoteSwiftPackageReference "snapkit" */;
+			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
