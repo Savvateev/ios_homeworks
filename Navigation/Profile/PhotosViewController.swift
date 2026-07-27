@@ -1,4 +1,5 @@
 import UIKit
+import iOSIntPackage
 
 class PhotosViewController: UIViewController {
    
@@ -9,12 +10,13 @@ class PhotosViewController: UIViewController {
         cv.translatesAutoresizingMaskIntoConstraints = false
         cv.dataSource = self
         cv.delegate = self
-        
-        // Регистрация нашей новой ячейки
         cv.register(PhotosCollectionViewCell.self, forCellWithReuseIdentifier: "PhotosCollectionViewCell")
         
         return cv
     }()
+    
+    private let imagePublisher = ImagePublisherFacade()
+    private var images: [UIImage] = []
     
     private let photos: [String] = (1...20).map { "\($0)" }
     private let sideInset: CGFloat = 8
@@ -22,6 +24,7 @@ class PhotosViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        subscribeToImages()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -32,8 +35,9 @@ class PhotosViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        // Скрываем NavBar
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        // Отменяем подписку
+        imagePublisher.removeSubscription(for: self)
     }
     
     private func setupView() {
@@ -59,16 +63,25 @@ class PhotosViewController: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
+    
+    private func subscribeToImages() {
+        imagePublisher.subscribe(self)
+        imagePublisher.addImagesWithTimer(
+            time: 0.3,
+            repeat: 20,
+            userImages: photos.compactMap { UIImage(named: $0) }
+        )
+    }
 }
 
 extension PhotosViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return photos.count
+        return images.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotosCollectionViewCell", for: indexPath) as! PhotosCollectionViewCell
-        cell.configure(with: photos[indexPath.item])
+        cell.configure(with: images[indexPath.item])
         return cell
     }
 }
@@ -91,5 +104,12 @@ extension PhotosViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return sideInset
+    }
+}
+
+extension PhotosViewController: ImageLibrarySubscriber {
+    func receive(images: [UIImage]) {
+        self.images = images
+        collectionView.reloadData()
     }
 }
