@@ -44,24 +44,36 @@ class ProfileHeaderView: UIView {
         return textField
     }()
 
-    private lazy var setStatusButton: UIButton = { // Используем lazy для корректного target self
-        let button = UIButton(type: .system)
-        button.setTitle("Новый статус", for: .normal)
-        button.backgroundColor = .systemBlue
-        button.setTitleColor(.white, for: .normal)
-        button.addTarget(self, action: #selector(statusButtonTouch), for: .touchUpInside)
-        button.layer.cornerRadius = 4
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOffset = CGSize(width: 4, height: 4)
-        button.layer.shadowRadius = 4
-        button.layer.shadowOpacity = 0.7
-        button.layer.masksToBounds = false
-        return button
-    }()
+//    private lazy var setStatusButton: UIButton = { 
+//        let button = UIButton(type: .system)
+//        button.setTitle("Новый статус", for: .normal)
+//        button.backgroundColor = .systemBlue
+//        button.setTitleColor(.white, for: .normal)
+//        button.addTarget(self, action: #selector(statusButtonTouch), for: .touchUpInside)
+//        button.layer.cornerRadius = 4
+//        button.layer.shadowColor = UIColor.black.cgColor
+//        button.layer.shadowOffset = CGSize(width: 4, height: 4)
+//        button.layer.shadowRadius = 4
+//        button.layer.shadowOpacity = 0.7
+//        button.layer.masksToBounds = false
+//        return button
+//    }()
+    
+    private lazy var setStatusButton = CustomButton(
+        title: "Новый статус",
+        titleColor: .white,
+        bgColor: .systemBlue
+    ) { [weak self] in
+        self?.statusButtonTapped()
+    }
     
     // MARK: - Actions
 
-    @objc private func statusButtonTouch() {
+//    @objc private func statusButtonTouch() {
+//        print("Кнопка новый статус нажата")
+//    }
+    
+    private func statusButtonTapped() {
         print("Кнопка новый статус нажата")
     }
     
