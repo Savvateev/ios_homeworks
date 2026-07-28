@@ -60,6 +60,7 @@ class LoginViewController: UIViewController {
         view.backgroundColor = .white
         self.navigationController?.isNavigationBarHidden = true
         setupLayout()
+        setupLogoTap()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -198,6 +199,18 @@ class LoginViewController: UIViewController {
         let okAction = UIAlertAction(title: "OK", style: .default)
         alert.addAction(okAction)
         present(alert, animated: true)
+    }
+    
+    // обработка нажатия на лого
+    private func setupLogoTap() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(logoTapped))
+        logoImageView.isUserInteractionEnabled = true
+        logoImageView.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func logoTapped() {
+        let feedVC = FeedViewController()
+        navigationController?.pushViewController(feedVC, animated: true)
     }
     
     // Keyboard Handling
