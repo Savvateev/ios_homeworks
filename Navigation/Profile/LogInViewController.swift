@@ -44,23 +44,14 @@ class LoginViewController: UIViewController {
         return tf
     }()
     
-    private lazy var loginButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Log In", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.addTarget(self, action: #selector(loginButtonTouch), for: .touchUpInside)
-        
-        if let pixelImage = UIImage(named: "blue_pixel") {
-            button.setBackgroundImage(pixelImage, for: .normal)
-            button.setBackgroundImage(pixelImage.withAlpha(0.8), for: .highlighted)
-            button.setBackgroundImage(pixelImage.withAlpha(0.8), for: .selected)
-        }
-        
-        button.layer.cornerRadius = 10
-        button.clipsToBounds = true
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
+    private lazy var loginButton = CustomButton(
+        title: "Log In",
+        titleColor: .white,
+        bgImage: UIImage(named: "blue_pixel"),
+        cornerRadius: 10
+    ) { [weak self] in
+        self?.loginButtonTouch()
+    }
     
     var loginDelegate: LoginViewControllerDelegate?
     
@@ -171,7 +162,7 @@ class LoginViewController: UIViewController {
     
     // Actions
     
-    @objc private func loginButtonTouch() {
+    private func loginButtonTouch() {
         guard let loginText = loginTextField.text, !loginText.isEmpty else {
             showAlert(title: "Ошибка", message: "Введите логин")
             return

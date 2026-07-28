@@ -1,27 +1,34 @@
-//
-//  CustomButton.swift
-//  Navigation
-//
-//  Created by Pavel Savvateev on 28.07.2026.
-//
-
 import UIKit
 
 class CustomButton: UIButton {
     
-    // Замыкание, которое будет вызвано при нажатии
     private var action: (() -> Void)?
     
-    // Инициализатор с основными параметрами
-    init(title: String, titleColor: UIColor = .white, bgColor: UIColor = .systemBlue, action: (() -> Void)?) {
+    init(
+        title: String,
+        titleColor: UIColor = .white,
+        bgColor: UIColor = .systemBlue,
+        bgImage: UIImage? = nil,
+        cornerRadius: CGFloat = 4,
+        action: (() -> Void)?
+    ) {
         self.action = action
         super.init(frame: .zero)
         
+        translatesAutoresizingMaskIntoConstraints = false
+
         setTitle(title, for: .normal)
         setTitleColor(titleColor, for: .normal)
         backgroundColor = bgColor
-        layer.cornerRadius = 4
+        layer.cornerRadius = cornerRadius
+        clipsToBounds = true
         titleLabel?.font = .systemFont(ofSize: 16)
+        
+        if let bgImage = bgImage {
+            setBackgroundImage(bgImage, for: .normal)
+            setBackgroundImage(bgImage.withAlpha(0.8), for: .highlighted)
+            setBackgroundImage(bgImage.withAlpha(0.8), for: .selected)
+        }
         
         addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
@@ -32,10 +39,5 @@ class CustomButton: UIButton {
     
     @objc private func buttonTapped() {
         action?()
-    }
-    
-    // Метод для обновления замыкания, если нужно изменить действие
-    func setAction(_ action: @escaping () -> Void) {
-        self.action = action
     }
 }
