@@ -3,7 +3,9 @@ import StorageService
 
 class ProfileViewController: UIViewController {
     
-    var user: User?
+    // MARK: - ViewModel
+    
+    private let viewModel = ProfileViewModel()
     
     // MARK: - UI Elements
     
@@ -20,44 +22,51 @@ class ProfileViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         
-        // Регистрация
         tableView.register(PostTableViewCell.self, forCellReuseIdentifier: "PostCell")
         tableView.register(PhotosTableViewCell.self, forCellReuseIdentifier: "PhotosCell")
         
         return tableView
     }()
     
-    private let posts: [Post] = [
-        Post(author: "LeoTolstoy", description: "пишу новый роман", image: "leotolstoy", likes: 10, views: 100 ),
-        Post(author: "Medinsky", description: "переписываю историю", image: "medinsky", likes: 0, views: 1000 ),
-        Post(author: "Selhoznadzor", description: "запрещаю армянскую форель", image: "rshn", likes: 5, views: 120 ),
-        Post(author: "Roskomnadzor", description: "блокирую интернет", image: "rkn", likes: 1, views: 10000 )
-    ]
-    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         setupLayout()
+        bindViewModel()
         setupUserInfo()
     }
-
+    
+    // MARK: - Public Methods
+    
+    func configure(with user: User) {
+        viewModel.setUser(user)
+        viewModel.setPosts(posts)
+    }
+    
     private func pushPhotosViewController() {
         let photosVC = PhotosViewController()
-        
-        // Выполняем переход с помощью push
         navigationController?.pushViewController(photosVC, animated: true)
     }
+    
+    // MARK: - Private Properties
+    
+    private let posts: [Post] = [
+        Post(author: "LeoTolstoy", description: "пишу новый роман", image: "leotolstoy", likes: 10, views: 100),
+        Post(author: "Medinsky", description: "переписываю историю", image: "medinsky", likes: 0, views: 1000),
+        Post(author: "Selhoznadzor", description: "запрещаю армянскую форель", image: "rshn", likes: 5, views: 120),
+        Post(author: "Roskomnadzor", description: "блокирую интернет", image: "rkn", likes: 1, views: 10000)
+    ]
     
     // MARK: - Private Methods
     
     private func setupLayout() {
-#if DEBUG
-view.backgroundColor = .systemYellow
-#else
-view.backgroundColor = .systemBackground
-#endif
+        #if DEBUG
+        view.backgroundColor = .systemYellow
+        #else
+        view.backgroundColor = .systemBackground
+        #endif
+        
         setupHierarchy()
         setupConstraints()
     }
@@ -75,11 +84,20 @@ view.backgroundColor = .systemBackground
         ])
     }
     
-    private func setupUserInfo() {
-        guard let user = user else { return }
-        profileHeaderView.configure(with: user)
+    private func bindViewModel() {
+        viewModel.onProfileUpdated = { [weak self] in
+            self?.profileHeaderView.configure(with: self!.viewModel)
+            self?.tableView.reloadData()
+        }
+        
+        viewModel.onStatusChanged = { [weak self] status in
+            self?.profileHeaderView.configure(with: self!.viewModel)
+        }
     }
     
+    private func setupUserInfo() {
+        profileHeaderView.configure(with: viewModel)
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -87,27 +105,25 @@ view.backgroundColor = .systemBackground
 extension ProfileViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3 // 0: Profile, 1: Photos, 2: Posts
+        return 3
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 0            // Только хедер
-        case 1: return 1            // Одна ячейка PhotosTableViewCell
-        case 2: return posts.count  // Список постов
+        case 0: return 0
+        case 1: return 1
+        case 2: return viewModel.posts.count
         default: return 0
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 1 {
-            // Секция с фотографиями
             let cell = tableView.dequeueReusableCell(withIdentifier: "PhotosCell", for: indexPath) as! PhotosTableViewCell
             return cell
         } else {
-            // Секция с постами
             let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as! PostTableViewCell
-            cell.configure(with: posts[indexPath.row])
+            cell.configure(with: viewModel.posts[indexPath.row])
             return cell
         }
     }
@@ -118,7 +134,6 @@ extension ProfileViewController: UITableViewDataSource {
 extension ProfileViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        // Хедер отображаем только в самой первой секции
         return section == 0 ? profileHeaderView : nil
     }
     
@@ -130,7 +145,6 @@ extension ProfileViewController: UITableViewDelegate {
         return section == 0 ? 220 : 0
     }
     
-    // Убираем стандартные отступы между секциями для красоты
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 0.1
     }
@@ -140,12 +154,10 @@ extension ProfileViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            // Снимаем выделение
-            tableView.deselectRow(at: indexPath, animated: true)
-            
-            // Если нажата секция с фотографиями
-            if indexPath.section == 1 {
-                pushPhotosViewController()
-            }
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        if indexPath.section == 1 {
+            pushPhotosViewController()
         }
+    }
 }

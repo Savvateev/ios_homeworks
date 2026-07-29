@@ -185,13 +185,14 @@ class LoginViewController: UIViewController {
         }
         
         let profileVC = ProfileViewController()
-        profileVC.user = User(
-            login: "test",
-            fullName: "Тестовый Пользователь",
-            avatar: UIImage(named: "test") ?? UIImage(),
-            status: "Debug Mode"
-        )
-        navigationController?.pushViewController(profileVC, animated: true)
+            let user = User(
+                login: "test",
+                fullName: "Тестовый Пользователь",
+                avatar: UIImage(named: "test") ?? UIImage(),
+                status: "Debug Mode"
+            )
+            profileVC.configure(with: user) // ← MVVM
+            navigationController?.pushViewController(profileVC, animated: true)
     }
     
     private func showAlert(title: String, message: String) {

@@ -1,13 +1,12 @@
 import UIKit
-import SnapKit // Не забудьте импортировать библиотеку
+import SnapKit
 
 class ProfileHeaderView: UIView {
     
     // MARK: - UI Elements
-
+    
     private let avatarImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "Cat")
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 50
         imageView.layer.borderWidth = 3
@@ -15,22 +14,22 @@ class ProfileHeaderView: UIView {
         imageView.clipsToBounds = true
         return imageView
     }()
-
+    
     private let fullNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Кошка"
         label.font = .systemFont(ofSize: 18, weight: .bold)
+        label.textColor = .black
         return label
     }()
-
+    
     private let statusLabel: UILabel = {
         let label = UILabel()
-        label.text = "В ожидании..."
         label.font = .systemFont(ofSize: 14, weight: .regular)
         label.textColor = .gray
+        label.numberOfLines = 0
         return label
     }()
-
+    
     private let statusTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Статус"
@@ -43,21 +42,6 @@ class ProfileHeaderView: UIView {
         textField.leftViewMode = .always
         return textField
     }()
-
-//    private lazy var setStatusButton: UIButton = { 
-//        let button = UIButton(type: .system)
-//        button.setTitle("Новый статус", for: .normal)
-//        button.backgroundColor = .systemBlue
-//        button.setTitleColor(.white, for: .normal)
-//        button.addTarget(self, action: #selector(statusButtonTouch), for: .touchUpInside)
-//        button.layer.cornerRadius = 4
-//        button.layer.shadowColor = UIColor.black.cgColor
-//        button.layer.shadowOffset = CGSize(width: 4, height: 4)
-//        button.layer.shadowRadius = 4
-//        button.layer.shadowOpacity = 0.7
-//        button.layer.masksToBounds = false
-//        return button
-//    }()
     
     private lazy var setStatusButton = CustomButton(
         title: "Новый статус",
@@ -67,77 +51,80 @@ class ProfileHeaderView: UIView {
         self?.statusButtonTapped()
     }
     
-    // MARK: - Actions
-
-//    @objc private func statusButtonTouch() {
-//        print("Кнопка новый статус нажата")
-//    }
+    // MARK: - ViewModel
     
-    private func statusButtonTapped() {
-        print("Кнопка новый статус нажата")
-    }
+    private var viewModel: ProfileViewModel?
     
     // MARK: - Init
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .lightGray
         setupLayout()
     }
-
+    
     required init?(coder: NSCoder) {
-        fatalError("ошибка инициализации")
+        fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Private Methods
-
+    // MARK: - Public Methods
+    
+    func configure(with viewModel: ProfileViewModel) {
+        self.viewModel = viewModel
+        fullNameLabel.text = viewModel.fullName
+        avatarImageView.image = viewModel.avatar
+        statusLabel.text = viewModel.status
+    }
+    
+    // MARK: - Actions
+    
+    private func statusButtonTapped() {
+        guard let text = statusTextField.text, !text.isEmpty else { return }
+        viewModel?.updateStatus(text)
+        statusLabel.text = text
+        statusTextField.text = ""
+    }
+    
+    // MARK: - Layout
+    
     private func setupLayout() {
         setupHierarchy()
         setupConstraints()
     }
     
     private func setupHierarchy() {
-        // addSubview остается стандартным
         [avatarImageView, fullNameLabel, statusLabel, statusTextField, setStatusButton].forEach { addSubview($0) }
     }
-
+    
     private func setupConstraints() {
         avatarImageView.snp.makeConstraints { make in
             make.top.leading.equalToSuperview().offset(16)
-            make.size.equalTo(100) // ширина и высота сразу
+            make.size.equalTo(100)
         }
-
+        
         fullNameLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(27)
             make.leading.equalTo(avatarImageView.snp.trailing).offset(16)
             make.trailing.equalToSuperview().offset(-16)
         }
-
+        
         setStatusButton.snp.makeConstraints { make in
             make.top.equalTo(avatarImageView.snp.bottom).offset(16)
-            make.leading.trailing.equalToSuperview().inset(16) // отступ 16 с обеих сторон
+            make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(50)
-            make.bottom.equalToSuperview().offset(-16) // Важно для саморастягивающегося хедера
+            make.bottom.equalToSuperview().offset(-16)
         }
-
+        
         statusTextField.snp.makeConstraints { make in
             make.leading.equalTo(fullNameLabel.snp.leading)
             make.trailing.equalToSuperview().offset(-16)
             make.height.equalTo(40)
             make.bottom.equalTo(setStatusButton.snp.top).offset(-10)
         }
-
+        
         statusLabel.snp.makeConstraints { make in
             make.leading.equalTo(fullNameLabel.snp.leading)
             make.bottom.equalTo(statusTextField.snp.top).offset(-10)
         }
     }
-    
-    func configure(with user: User) {
-        avatarImageView.image = user.avatar
-        fullNameLabel.text = user.fullName
-        statusLabel.text = user.status
-        statusTextField.text = user.status
-    }
-    
 }
