@@ -1,7 +1,6 @@
 import UIKit
 import StorageService
 import SnapKit
-import iOSIntPackage
 
 class PostTableViewCell: UITableViewCell {
     
@@ -39,8 +38,6 @@ class PostTableViewCell: UITableViewCell {
         label.font = .systemFont(ofSize: 16)
         return label
     }()
-
-    // MARK: - Init
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -50,30 +47,15 @@ class PostTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    // MARK: - Public Methods
     
     func configure(with post: Post) {
         authorLabel.text = post.author
         descriptionLabel.text = post.description
         likesLabel.text = "Likes: \(post.likes)"
         viewsLabel.text = "Views: \(post.views)"
-        
-        // Загружаем оригинальное фото и применяем фильтр
-        if let image = UIImage(named: post.image) {
-            setupImageWithFilter(image)
-        }
+        postImageView.image = UIImage(named: post.image)
     }
     
-    private func setupImageWithFilter(_ sourceImage: UIImage) {
-        let processor = ImageProcessor()
-        
-        //  .chrome, .colorInvert, .noir, .fade, .tonal......
-        processor.processImage(sourceImage: sourceImage, filter: .tonal) { [weak self] processedImage in
-            self?.postImageView.image = processedImage
-        }
-    }
-
     private func setupLayout() {
         setupHierarchy()
         setupConstraints()

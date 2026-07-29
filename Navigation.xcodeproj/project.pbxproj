@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		544C5CD82FED265C00EC49C5 /* StorageService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 544C5CD02FED265B00EC49C5 /* StorageService.framework */; };
 		544C5CD92FED265C00EC49C5 /* StorageService.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 544C5CD02FED265B00EC49C5 /* StorageService.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		549437F43014CCF600047F06 /* iOSIntPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 549437F33014CCF600047F06 /* iOSIntPackage */; };
 		549437F73014CD5C00047F06 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 549437F63014CD5C00047F06 /* SnapKit */; };
 /* End PBXBuildFile section */
 
@@ -47,7 +46,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				Package.swift,
 			);
 			target = 547926F12F988973005399A9 /* Navigation */;
 		};
@@ -83,7 +81,6 @@
 			files = (
 				549437F73014CD5C00047F06 /* SnapKit in Frameworks */,
 				544C5CD82FED265C00EC49C5 /* StorageService.framework in Frameworks */,
-				549437F43014CCF600047F06 /* iOSIntPackage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,7 +168,6 @@
 			);
 			name = Navigation;
 			packageProductDependencies = (
-				549437F33014CCF600047F06 /* iOSIntPackage */,
 				549437F63014CD5C00047F06 /* SnapKit */,
 			);
 			productName = Navigation;
@@ -206,7 +202,6 @@
 			mainGroup = 547926E92F988973005399A9;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				5451E8063011BEDB00589737 /* XCLocalSwiftPackageReference "../../iOSIntPackage-imagepublisher" */,
 				549437F53014CD3500047F06 /* XCRemoteSwiftPackageReference "snapkit" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -554,13 +549,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		5451E8063011BEDB00589737 /* XCLocalSwiftPackageReference "../../iOSIntPackage-imagepublisher" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../iOSIntPackage-imagepublisher";
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		549437F53014CD3500047F06 /* XCRemoteSwiftPackageReference "snapkit" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -573,11 +561,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		549437F33014CCF600047F06 /* iOSIntPackage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5451E8063011BEDB00589737 /* XCLocalSwiftPackageReference "../../iOSIntPackage-imagepublisher" */;
-			productName = iOSIntPackage;
-		};
 		549437F63014CD5C00047F06 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 549437F53014CD3500047F06 /* XCRemoteSwiftPackageReference "snapkit" */;
