@@ -28,10 +28,19 @@ class ProfileViewController: UIViewController {
         return tableView
     }()
     
+    private let segmentControl: UISegmentedControl = {
+        let control = UISegmentedControl(items: ["Profile", "Feed"])
+        control.selectedSegmentIndex = 0
+        control.translatesAutoresizingMaskIntoConstraints = false // ← добавить
+        return control
+    }()
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.title = "Profile" // ← добавить title для navbar
+        segmentControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged) // ← добавить addTarget
         setupLayout()
         bindViewModel()
         setupUserInfo()
@@ -73,14 +82,20 @@ class ProfileViewController: UIViewController {
     
     private func setupHierarchy() {
         view.addSubview(tableView)
+        view.addSubview(segmentControl)
     }
-    
+
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: segmentControl.topAnchor, constant: -10),
+            
+            segmentControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            segmentControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            segmentControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            segmentControl.heightAnchor.constraint(equalToConstant: 32)
         ])
     }
     
@@ -97,6 +112,23 @@ class ProfileViewController: UIViewController {
     
     private func setupUserInfo() {
         profileHeaderView.configure(with: viewModel)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
+    @objc private func segmentChanged() {
+        switch segmentControl.selectedSegmentIndex {
+        case 0:
+            tableView.reloadData()
+        case 1:
+            let feedVC = FeedViewController()
+            navigationController?.pushViewController(feedVC, animated: true)
+            segmentControl.selectedSegmentIndex = 0
+        default:
+            break
+        }
     }
 }
 
