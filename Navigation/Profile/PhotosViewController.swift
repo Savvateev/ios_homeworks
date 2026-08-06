@@ -2,6 +2,8 @@ import UIKit
 import SnapKit
 
 class PhotosViewController: UIViewController {
+    
+    weak var coordinator: ProfileCoordinator?
 
     // MARK: - UI Elements
     
@@ -19,7 +21,6 @@ class PhotosViewController: UIViewController {
     // MARK: - Private Properties
     
     private var images: [UIImage] = []
-    
     private let photos: [String] = (1...20).map { "\($0)" }
     private let sideInset: CGFloat = 8
 

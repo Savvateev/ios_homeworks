@@ -3,6 +3,8 @@ import StorageService
 
 class ProfileViewController: UIViewController {
     
+    weak var coordinator: ProfileCoordinator?
+    
     // MARK: - ViewModel
     
     private let viewModel = ProfileViewModel()
@@ -54,8 +56,7 @@ class ProfileViewController: UIViewController {
     }
     
     private func pushPhotosViewController() {
-        let photosVC = PhotosViewController()
-        navigationController?.pushViewController(photosVC, animated: true)
+        coordinator?.showPhotos()
     }
     
     // MARK: - Private Properties
@@ -123,8 +124,7 @@ class ProfileViewController: UIViewController {
         case 0:
             tableView.reloadData()
         case 1:
-            let feedVC = FeedViewController()
-            navigationController?.pushViewController(feedVC, animated: true)
+            coordinator?.switchToFeed()
             segmentControl.selectedSegmentIndex = 0
         default:
             break

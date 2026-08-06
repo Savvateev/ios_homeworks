@@ -2,6 +2,8 @@ import UIKit
 
 class LoginViewController: UIViewController {
     
+    var loginCoordinator: LoginCoordinator?
+    
     // UI элементы
     
     private let scrollView: UIScrollView = {
@@ -58,9 +60,7 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        self.navigationController?.isNavigationBarHidden = true
         setupLayout()
-        setupLogoTap()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -184,15 +184,13 @@ class LoginViewController: UIViewController {
             return
         }
         
-        let profileVC = ProfileViewController()
-            let user = User(
-                login: "test",
-                fullName: "Тестовый Пользователь",
-                avatar: UIImage(named: "test") ?? UIImage(),
-                status: "Debug Mode"
-            )
-            profileVC.configure(with: user) // ← MVVM
-            navigationController?.pushViewController(profileVC, animated: true)
+        let user = User(
+            login: loginText,
+            fullName: "Тестовый Пользователь",
+            avatar: UIImage(named: "test") ?? UIImage(),
+            status: "Debug Mode"
+        )
+        loginCoordinator?.loginSucceeded(user: user)
     }
     
     private func showAlert(title: String, message: String) {
@@ -200,18 +198,6 @@ class LoginViewController: UIViewController {
         let okAction = UIAlertAction(title: "OK", style: .default)
         alert.addAction(okAction)
         present(alert, animated: true)
-    }
-    
-    // обработка нажатия на лого
-    private func setupLogoTap() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(logoTapped))
-        logoImageView.isUserInteractionEnabled = true
-        logoImageView.addGestureRecognizer(tapGesture)
-    }
-
-    @objc private func logoTapped() {
-        let feedVC = FeedViewController()
-        navigationController?.pushViewController(feedVC, animated: true)
     }
     
     // Keyboard Handling

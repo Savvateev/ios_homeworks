@@ -2,6 +2,8 @@ import UIKit
 
 class FeedViewController: UIViewController {
     
+    weak var coordinator: FeedCoordinator?
+    
     // MARK: - UI Elements
     
     private let guessTextField: UITextField = {
