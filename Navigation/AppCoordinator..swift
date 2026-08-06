@@ -19,10 +19,13 @@ final class AppCoordinator: Coordinator {
 
     private func showLogin() {
         let loginCoord = LoginCoordinator()
-        loginCoord.appCoordinator = self
         loginCoord.start()
 
-        loginCoordinator = loginCoord // ← strong reference, не теряется
+        loginCoordinator = loginCoord
+
+        loginCoord.onLoginSucceeded = { [weak self] user in
+            self?.didLogin(user: user)
+        }
 
         guard let loginVC = loginCoord.loginViewController else { return }
         window.rootViewController = loginVC

@@ -4,7 +4,9 @@ final class LoginCoordinator: Coordinator {
 
     var childCoordinators: [Coordinator] = []
     var loginViewController: LoginViewController?
-    weak var appCoordinator: AppCoordinator?
+
+    var onLoginSucceeded: ((User) -> Void)?
+    var onLogoTapped: (() -> Void)?
 
     func start() {
         let loginVC = LoginViewController()
@@ -14,7 +16,7 @@ final class LoginCoordinator: Coordinator {
     }
 
     func loginSucceeded(user: User) {
-        print("✅ loginSucceeded called, appCoordinator is \(appCoordinator != nil ? "set" : "nil")") // ← для отладки
-        appCoordinator?.didLogin(user: user)
+        print(user)
+        onLoginSucceeded?(user)
     }
 }
