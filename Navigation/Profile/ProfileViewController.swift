@@ -43,14 +43,14 @@ class ProfileViewController: UIViewController {
         segmentControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged) // ← добавить addTarget
         setupLayout()
         bindViewModel()
-        setupUserInfo()
+        loadPosts()
     }
     
     // MARK: - Public Methods
     
     func configure(with user: User) {
         viewModel.setUser(user)
-        viewModel.setPosts(posts)
+        //viewModel.setPosts(posts)
     }
     
     private func pushPhotosViewController() {
@@ -60,12 +60,15 @@ class ProfileViewController: UIViewController {
     
     // MARK: - Private Properties
     
-    private let posts: [Post] = [
-        Post(author: "LeoTolstoy", description: "пишу новый роман", image: "leotolstoy", likes: 10, views: 100),
-        Post(author: "Medinsky", description: "переписываю историю", image: "medinsky", likes: 0, views: 1000),
-        Post(author: "Selhoznadzor", description: "запрещаю армянскую форель", image: "rshn", likes: 5, views: 120),
-        Post(author: "Roskomnadzor", description: "блокирую интернет", image: "rkn", likes: 1, views: 10000)
-    ]
+    private func loadPosts() {
+        let posts = [
+            Post(author: "LeoTolstoy", description: "пишу новый роман", image: "leotolstoy", likes: 10, views: 100),
+            Post(author: "Medinsky", description: "переписываю историю", image: "medinsky", likes: 0, views: 1000),
+            Post(author: "Selhoznadzor", description: "запрещаю армянскую форель", image: "rshn", likes: 5, views: 120),
+            Post(author: "Roskomnadzor", description: "блокирую интернет", image: "rkn", likes: 1, views: 10000)
+        ]
+        viewModel.setPosts(posts)
+    }
     
     // MARK: - Private Methods
     
@@ -101,12 +104,9 @@ class ProfileViewController: UIViewController {
     
     private func bindViewModel() {
         viewModel.onProfileUpdated = { [weak self] in
-            self?.profileHeaderView.configure(with: self!.viewModel)
-            self?.tableView.reloadData()
-        }
-        
-        viewModel.onStatusChanged = { [weak self] status in
-            self?.profileHeaderView.configure(with: self!.viewModel)
+            guard let self = self else { return }
+            self.profileHeaderView.configure(with: self.viewModel)
+            self.tableView.reloadData()
         }
     }
     
