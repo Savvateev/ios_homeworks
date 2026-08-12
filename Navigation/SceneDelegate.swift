@@ -7,6 +7,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
+
+        let appConfiguration: AppConfiguration = {
+            let configurations: [AppConfiguration] = [
+                .development("https://swapi.dev/api/people/8"),
+                .staging("https://swapi.dev/api/starships/3"),
+                .production("https://swapi.dev/api/planets/5")
+            ]
+            return configurations.randomElement()!
+        }()
+
+        NetworkService.request(for: appConfiguration)
+
         let window = UIWindow(windowScene: windowScene)
         let appCoordinator = AppCoordinator(window: window)
         appCoordinator.start()

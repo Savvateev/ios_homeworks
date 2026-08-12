@@ -7,7 +7,7 @@
 import Foundation
 
 enum AppConfiguration {
-    case development(URL)
-    case staging(URL)
-    case production(URL)
+    case development(String)
+    case staging(String)
+    case production(String)
 }
