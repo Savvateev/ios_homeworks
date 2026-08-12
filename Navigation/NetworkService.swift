@@ -1,9 +1,3 @@
-//
-//  NetworkService.swift
-//  Navigation
-//
-//  Created by Pavel Savvateev on 12.08.2026.
-//
 import Foundation
 
 struct NetworkService {
@@ -19,8 +13,6 @@ struct NetworkService {
         case .production(let string):
             urlString = string
         }
-        
-        print(urlString)
 
         guard let url = URL(string: urlString) else {
             print("❌ Invalid URL: \(urlString)")
@@ -29,7 +21,9 @@ struct NetworkService {
 
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                print(url," ❌ Error: \(error.localizedDescription)")
+                let nsError = error as NSError
+                print("❌ Error: \(error.localizedDescription)")
+                print("❌ Error Code: \(nsError.code)")
                 return
             }
 
