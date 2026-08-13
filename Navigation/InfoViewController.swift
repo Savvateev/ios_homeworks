@@ -1,41 +1,44 @@
 import UIKit
+import SnapKit
 
 class InfoViewController: UIViewController {
 
+    private let orbitalPeriodLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Загрузка..."
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.font = .systemFont(ofSize: 20, weight: .bold)
+        return label
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemYellow
-        setupAlertButton()
+        view.backgroundColor = .white
+        setupLayout()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didReceiveOrbitalPeriod(_:)),
+            name: NSNotification.Name("OrbitalPeriodReceived"),
+            object: nil
+        )
     }
-    
-    private func setupAlertButton() {
-        let button = UIButton(type: .system)
-        button.setTitle("Alert", for: .normal)
-        button.addTarget(self, action: #selector(showAlert), for: .touchUpInside)
-        
-        button.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(button)
-        
-        NSLayoutConstraint.activate([
-            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            button.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
-    
-    @objc private func showAlert() {
-        let alert = UIAlertController(title: "Внимание", message: "Продолжить?", preferredStyle: .alert)
-        
-        let okAction = UIAlertAction(title: "Да", style: .default) { _ in
-            print("Нажато Да")
+
+    private func setupLayout() {
+        view.addSubview(orbitalPeriodLabel)
+        orbitalPeriodLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(16)
         }
-        
-        let cancelAction = UIAlertAction(title: "Нет", style: .cancel) { _ in
-            print("Нажато Нет")
-        }
-        
-        alert.addAction(okAction)
-        alert.addAction(cancelAction)
-        
-        present(alert, animated: true)
+    }
+
+    @objc private func didReceiveOrbitalPeriod(_ notification: Notification) {
+        guard let period = notification.userInfo?["orbitalPeriod"] as? String else { return }
+        orbitalPeriodLabel.text = "Период обращения Татуина: \(period) дней"
     }
 }

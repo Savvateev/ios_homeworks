@@ -27,14 +27,31 @@ struct NetworkService {
                 return
             }
 
-            if let data = data,
-               let dataString = String(data: data, encoding: .utf8) {
-                print("✅ Data:\n\(dataString)")
+            if let httpResponse = response as? HTTPURLResponse {
+                print("Status Code: \(httpResponse.statusCode)")
+                print("All Header Fields: \(httpResponse.allHeaderFields)")
             }
 
-            if let httpResponse = response as? HTTPURLResponse {
-                print("📡 Status Code: \(httpResponse.statusCode)")
-                print("📡 All Header Fields: \(httpResponse.allHeaderFields)")
+            guard let data = data else {
+                print("❌ No data received")
+                return
+            }
+
+            do {
+                let planet = try JSONDecoder().decode(Planet.self, from: data)
+                print("Planet: \(planet.name)")
+                print("Orbital Period: \(planet.orbitalPeriod) days")
+
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("OrbitalPeriodReceived"),
+                        object: nil,
+                        userInfo: ["orbitalPeriod": planet.orbitalPeriod]
+                    )
+                }
+
+            } catch {
+                print("❌ JSON Decoding Error: \(error.localizedDescription)")
             }
         }
 
