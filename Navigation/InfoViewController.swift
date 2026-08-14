@@ -5,7 +5,7 @@ class InfoViewController: UIViewController {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Загрузка фильма..."
+        label.text = "Загрузка фильма.."
         label.textAlignment = .center
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 18, weight: .bold)
@@ -14,7 +14,7 @@ class InfoViewController: UIViewController {
 
     private let orbitalPeriodLabel: UILabel = {
         let label = UILabel()
-        label.text = "Загрузка планеты..."
+        label.text = "Загрузка планеты.."
         label.textAlignment = .center
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 18, weight: .regular)
