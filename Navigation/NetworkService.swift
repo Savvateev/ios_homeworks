@@ -2,20 +2,9 @@ import Foundation
 
 struct NetworkService {
 
-    static func request(for configuration: AppConfiguration) {
-        let urlString: String
-
-        switch configuration {
-        case .development(let string):
-            urlString = string
-        case .staging(let string):
-            urlString = string
-        case .production(let string):
-            urlString = string
-        }
-
-        guard let url = URL(string: urlString) else {
-            print("❌ Invalid URL: \(urlString)")
+    static func requestPlanet(completion: @escaping (Result<Planet, Error>) -> Void) {
+        guard let url = URL(string: "https://swapi.py4e.com/api/planets/1") else {
+            completion(.failure(URLError(.badURL)))
             return
         }
 
@@ -24,34 +13,22 @@ struct NetworkService {
                 let nsError = error as NSError
                 print("❌ Error: \(error.localizedDescription)")
                 print("❌ Error Code: \(nsError.code)")
+                completion(.failure(error))
                 return
             }
 
-            if let httpResponse = response as? HTTPURLResponse {
-                print("Status Code: \(httpResponse.statusCode)")
-                print("All Header Fields: \(httpResponse.allHeaderFields)")
-            }
-
             guard let data = data else {
-                print("❌ No data received")
+                completion(.failure(URLError(.badServerResponse)))
                 return
             }
 
             do {
                 let planet = try JSONDecoder().decode(Planet.self, from: data)
-                print("Planet: \(planet.name)")
-                print("Orbital Period: \(planet.orbitalPeriod) days")
-
-                DispatchQueue.main.async {
-                    NotificationCenter.default.post(
-                        name: NSNotification.Name("OrbitalPeriodReceived"),
-                        object: nil,
-                        userInfo: ["orbitalPeriod": planet.orbitalPeriod]
-                    )
-                }
-
+                print("✅ Planet: \(planet.name), Orbital Period: \(planet.orbitalPeriod)")
+                completion(.success(planet))
             } catch {
-                print("❌ JSON Decoding Error: \(error.localizedDescription)")
+                print("❌ JSON Error: \(error.localizedDescription)")
+                completion(.failure(error))
             }
         }
 

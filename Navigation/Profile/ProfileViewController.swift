@@ -187,9 +187,15 @@ extension ProfileViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
-        if indexPath.section == 1 {
+
+        switch indexPath.section {
+        case 1:
             pushPhotosViewController()
+        case 2:
+            let infoVC = InfoViewController()
+            navigationController?.pushViewController(infoVC, animated: true)
+        default:
+            break
         }
     }
 }

@@ -16,17 +16,7 @@ class InfoViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupLayout()
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(didReceiveOrbitalPeriod(_:)),
-            name: NSNotification.Name("OrbitalPeriodReceived"),
-            object: nil
-        )
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
+        fetchPlanet()
     }
 
     private func setupLayout() {
@@ -37,8 +27,16 @@ class InfoViewController: UIViewController {
         }
     }
 
-    @objc private func didReceiveOrbitalPeriod(_ notification: Notification) {
-        guard let period = notification.userInfo?["orbitalPeriod"] as? String else { return }
-        orbitalPeriodLabel.text = "Период обращения Татуина: \(period) дней"
+    private func fetchPlanet() {
+        NetworkService.requestPlanet { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let planet):
+                    self?.orbitalPeriodLabel.text = "Период обращения Татуина: \(planet.orbitalPeriod) дней"
+                case .failure(let error):
+                    self?.orbitalPeriodLabel.text = "Ошибка: \(error.localizedDescription)"
+                }
+            }
+        }
     }
 }
