@@ -2,16 +2,10 @@ import UIKit
 
 class PostViewController: UIViewController {
     
-    var post: Post?
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemPink
-        
-        if let post = post {
-            title = post.title
-        }
-        
+        title = "Текст поста"
         setupBarButton()
     }
     
