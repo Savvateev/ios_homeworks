@@ -1,45 +1,70 @@
 import Foundation
+import FirebaseAuth
+
+// MARK: - Protocols
+
+protocol CheckerServiceProtocol {
+    func checkCredentials(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
+    func signUp(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
+}
 
 protocol LoginViewControllerDelegate: AnyObject {
-    func check(login: String, password: String) -> Bool
+    func checkCredentials(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
+    func signUp(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 protocol LoginFactory {
     func makeLoginInspector() -> LoginInspector
 }
 
-final class Checker {
-    
-    static let shared = Checker()
-    
-    private let login: String = {
-        #if DEBUG
-        return "test"
-        #else
-        return "user"
-        #endif
-    }()
-    
-    private let password = "111"
-    
+// MARK: - CheckerService
+
+final class CheckerService: CheckerServiceProtocol {
+
+    static let shared = CheckerService()
+
     private init() {}
-    
-    func check(login: String, password: String) -> Bool {
-        return login == self.login && password == self.password
+
+    func checkCredentials(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        Auth.auth().signIn(withEmail: email, password: password) { _, error in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.success(()))
+            }
+        }
+    }
+
+    func signUp(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        Auth.auth().createUser(withEmail: email, password: password) { _, error in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.success(()))
+            }
+        }
     }
 }
+
+// MARK: - LoginInspector
 
 final class LoginInspector: LoginViewControllerDelegate {
-    
-    private let checker = Checker.shared
-    
-    func check(login: String, password: String) -> Bool {
-        return checker.check(login: login, password: password)
+
+    private let checkerService = CheckerService.shared
+
+    func checkCredentials(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        checkerService.checkCredentials(email: email, password: password, completion: completion)
+    }
+
+    func signUp(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        checkerService.signUp(email: email, password: password, completion: completion)
     }
 }
 
+// MARK: - Factory
+
 struct MyLoginFactory: LoginFactory {
-    
+
     func makeLoginInspector() -> LoginInspector {
         return LoginInspector()
     }
