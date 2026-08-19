@@ -1,9 +1,11 @@
 import UIKit
-import FirebaseAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+
+    // Сильная ссылка, чтобы LoginInspector не деаллоцировался
+    private var loginInspector: LoginInspector?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -11,7 +13,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let loginVC = LoginViewController()
         
         let factory: LoginFactory = MyLoginFactory()
-        loginVC.loginDelegate = factory.makeLoginInspector()
+        loginInspector = factory.makeLoginInspector()
+        loginVC.loginDelegate = loginInspector
         
         let navigationController = UINavigationController(rootViewController: loginVC)
         
@@ -19,8 +22,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
     }
-
-    func sceneDidDisconnect(_ scene: UIScene) {
-        try? Auth.auth().signOut()
-    }
+    
 }

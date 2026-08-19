@@ -1,7 +1,7 @@
 import Foundation
-import FirebaseAuth
+import Supabase
 
-// MARK: - Protocols
+// MARK: - Protocols (не меняются)
 
 protocol CheckerServiceProtocol {
     func checkCredentials(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
@@ -17,36 +17,52 @@ protocol LoginFactory {
     func makeLoginInspector() -> LoginInspector
 }
 
+// MARK: - Конфигурация Supabase
+
+enum SupabaseConfig {
+    static let projectURL = URL(string: "https://bkpdvuuocxvaofpstdbh.supabase.co")!
+    static let anonKey = "sb_publishable_7BmY8_WU-1cOTTTiq8SrQg_IVGYAgYd"
+}
+
 // MARK: - CheckerService
 
 final class CheckerService: CheckerServiceProtocol {
 
     static let shared = CheckerService()
 
-    private init() {}
+    private let client: SupabaseClient
+
+    private init() {
+        client = SupabaseClient(
+            supabaseURL: SupabaseConfig.projectURL,
+            supabaseKey: SupabaseConfig.anonKey
+        )
+    }
 
     func checkCredentials(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        Auth.auth().signIn(withEmail: email, password: password) { _, error in
-            if let error = error {
-                completion(.failure(error))
-            } else {
+        Task {
+            do {
+                let _ = try await client.auth.signIn(email: email, password: password)
                 completion(.success(()))
+            } catch let error {
+                completion(.failure(error))
             }
         }
     }
 
     func signUp(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        Auth.auth().createUser(withEmail: email, password: password) { _, error in
-            if let error = error {
-                completion(.failure(error))
-            } else {
+        Task {
+            do {
+                let _ = try await client.auth.signUp(email: email, password: password)
                 completion(.success(()))
+            } catch let error {
+                completion(.failure(error))
             }
         }
     }
 }
 
-// MARK: - LoginInspector
+// MARK: - LoginInspector (не меняется)
 
 final class LoginInspector: LoginViewControllerDelegate {
 
@@ -61,7 +77,7 @@ final class LoginInspector: LoginViewControllerDelegate {
     }
 }
 
-// MARK: - Factory
+// MARK: - Factory (не меняется)
 
 struct MyLoginFactory: LoginFactory {
 
