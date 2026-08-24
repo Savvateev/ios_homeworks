@@ -203,13 +203,12 @@ class LoginViewController: UIViewController {
         
         loginButton.isEnabled = false
         
-        // (d) / (a) / (c): сначала проверяем, есть ли пользователь в БД
         loginDelegate.checkCredentials(email: email, password: password) { [weak self] result in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 switch result {
                 case .success:
-                    self.navigateToFeed()
+                    self.navigateToProfile()
 
                 case .failure(let error):
                     let authError = error as? Supabase.AuthError
@@ -235,7 +234,7 @@ class LoginViewController: UIViewController {
             DispatchQueue.main.async {
                 switch result {
                 case .success:
-                    self.navigateToFeed()
+                    self.navigateToProfile()
                 case .failure(let error):
                     let authError = error as? Supabase.AuthError
                     let codeRaw = authError?.errorCode.rawValue ?? ""
@@ -245,7 +244,7 @@ class LoginViewController: UIViewController {
                     if codeRaw == "user_already_exists"
                         || codeRaw == "email_taken"
                         || codeRaw == "email_exists" {
-                        self.navigateToFeed()
+                        self.navigateToProfile()
                     } else {
                         self.showAlert(title: "Ошибка регистрации",
                                        message: authError?.message ?? error.localizedDescription)
@@ -257,21 +256,22 @@ class LoginViewController: UIViewController {
     
     private func navigateToProfile() {
         let profileVC = ProfileViewController()
+        let email = loginDelegate?.currentUserEmail() ?? ""
+
         let user = User(
-            login: loginTextField.text ?? "",
-            fullName: loginTextField.text ?? "",
+            login: email,
+            fullName: email,
             avatar: UIImage(named: "test") ?? UIImage(),
             status: "Online"
         )
         profileVC.configure(with: user)
+        profileVC.isAdmin = (email == "bhelp@icloud.com")
         navigationController?.pushViewController(profileVC, animated: true)
     }
 
     private func navigateToFeed() {
-        print("NavigateFeed")
         let feedVC = FeedViewController()
         let email = loginDelegate?.currentUserEmail() ?? ""
-        print("DEBUG email=\(email) isAdmin=\(email == "bhelp@icloud.com")")
         feedVC.isAdmin = (email == "bhelp@icloud.com")
         navigationController?.pushViewController(feedVC, animated: true)
     }

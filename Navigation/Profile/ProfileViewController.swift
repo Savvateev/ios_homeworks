@@ -3,6 +3,8 @@ import StorageService
 
 class ProfileViewController: UIViewController {
     
+    var isAdmin: Bool = false
+    
     // MARK: - ViewModel
     
     private let viewModel = ProfileViewModel()
@@ -39,11 +41,15 @@ class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "Profile" // ← добавить title для navbar
-        segmentControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged) // ← добавить addTarget
+        navigationItem.title = "Profile"
+        segmentControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
         setupLayout()
         bindViewModel()
-        loadPosts()
+        if isAdmin {
+            loadPosts()            // админ → лента с постами
+        } else {
+            setupEmptyMessage()   // обычный юзер → «здесь ничего нет»
+        }
     }
     
     // MARK: - Public Methods
@@ -58,7 +64,22 @@ class ProfileViewController: UIViewController {
         navigationController?.pushViewController(photosVC, animated: true)
     }
     
-    // MARK: - Private Properties
+    private func setupEmptyMessage() {
+        let emptyLabel = UILabel()
+        emptyLabel.text = "Здесь пока ничего нет"
+        emptyLabel.textAlignment = .center
+        emptyLabel.textColor = .systemGray
+        emptyLabel.translatesAutoresizingMaskIntoConstraints = false   // ← обязательно (как в фиксе)
+        view.addSubview(emptyLabel)
+
+        NSLayoutConstraint.activate([
+            emptyLabel.topAnchor.constraint(equalTo: view.centerYAnchor, constant: -20),
+            emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            emptyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            emptyLabel.heightAnchor.constraint(equalToConstant: 30)
+        ])
+    }
     
     private func loadPosts() {
         let posts = [
