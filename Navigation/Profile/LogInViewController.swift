@@ -79,6 +79,8 @@ class LoginViewController: UIViewController {
     
     // Setup
     
+    
+    
     private func setupLayout() {
         setupHierarchy()
         setupSeparator()
@@ -207,19 +209,17 @@ class LoginViewController: UIViewController {
             DispatchQueue.main.async {
                 switch result {
                 case .success:
-                    self.navigateToProfile()
+                    self.navigateToFeed()
 
                 case .failure(let error):
                     let authError = error as? Supabase.AuthError
                     let codeRaw = authError?.errorCode.rawValue ?? ""
 
-                    print("🔴 Supabase error: \(authError?.message ?? error.localizedDescription)")
-                    print("🔴 ErrorCode: \(codeRaw)")
-
                     if codeRaw == "invalid_credentials" {
-                        // Пользователя нет ИЛИ пароль неверный → пробуем регистрацию
                         self.signUpAndNavigate(email: email, password: password)
                     } else {
+                        print("🔴 Supabase error: \(authError?.message ?? error.localizedDescription)")
+                        print("🔴 ErrorCode: \(codeRaw)")
                         self.showAlert(title: "Ошибка входа", message: authError?.message ?? "Не удалось войти. Проверьте соединение с сетью")
                     }
                 }
@@ -229,15 +229,27 @@ class LoginViewController: UIViewController {
     
     private func signUpAndNavigate(email: String, password: String) {
         guard let loginDelegate = loginDelegate else { return }
-        
+
         loginDelegate.signUp(email: email, password: password) { [weak self] result in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 switch result {
                 case .success:
-                    self.navigateToProfile()
+                    self.navigateToFeed()
                 case .failure(let error):
-                    self.showAlert(title: "Ошибка регистрации", message: error.localizedDescription)
+                    let authError = error as? Supabase.AuthError
+                    let codeRaw = authError?.errorCode.rawValue ?? ""
+
+                    // Пользователь уже зарегистрирован → не показываем "already exists",
+                    // а просто открываем пустую ленту
+                    if codeRaw == "user_already_exists"
+                        || codeRaw == "email_taken"
+                        || codeRaw == "email_exists" {
+                        self.navigateToFeed()
+                    } else {
+                        self.showAlert(title: "Ошибка регистрации",
+                                       message: authError?.message ?? error.localizedDescription)
+                    }
                 }
             }
         }
@@ -253,6 +265,15 @@ class LoginViewController: UIViewController {
         )
         profileVC.configure(with: user)
         navigationController?.pushViewController(profileVC, animated: true)
+    }
+
+    private func navigateToFeed() {
+        print("NavigateFeed")
+        let feedVC = FeedViewController()
+        let email = loginDelegate?.currentUserEmail() ?? ""
+        print("DEBUG email=\(email) isAdmin=\(email == "bhelp@icloud.com")")
+        feedVC.isAdmin = (email == "bhelp@icloud.com")
+        navigationController?.pushViewController(feedVC, animated: true)
     }
     
     private func showAlert(title: String, message: String) {

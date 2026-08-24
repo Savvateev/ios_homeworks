@@ -40,13 +40,13 @@ class FeedViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        navigationItem.title = "Feed"
         if isAdmin {
+            navigationItem.title = "Feed"
             setupAdminFeed()
         } else {
+            navigationItem.title = "Empty Feed"
             setupEmptyFeed()
         }
-
     }
 
     private func setupEmptyFeed() {
@@ -54,7 +54,15 @@ class FeedViewController: UIViewController {
         emptyLabel.text = "Лента пуста. Пока нет публикаций."
         emptyLabel.textAlignment = .center
         emptyLabel.textColor = .systemGray
+        emptyLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(emptyLabel)
+
+        NSLayoutConstraint.activate([
+            emptyLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 200),
+            emptyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            emptyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+        ])
+        emptyLabel.heightAnchor.constraint(equalToConstant: 30)
     }
     
     override func viewWillAppear(_ animated: Bool) {

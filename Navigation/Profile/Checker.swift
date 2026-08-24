@@ -1,11 +1,10 @@
 import Foundation
 import Supabase
 
-// MARK: - Protocols (не меняются)
-
 protocol CheckerServiceProtocol {
     func checkCredentials(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
     func signUp(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
+    func currentUserEmail() -> String?
 }
 
 protocol LoginViewControllerDelegate: AnyObject {
@@ -25,8 +24,8 @@ enum SupabaseConfig {
     static let anonKey = "sb_publishable_7BmY8_WU-1cOTTTiq8SrQg_IVGYAgYd"
 }
 
-
 // MARK: - Служба сессии
+
 protocol SessionServiceProtocol {
     func currentUserEmail() -> String?
 }
@@ -67,11 +66,13 @@ final class CheckerService: CheckerServiceProtocol {
             }
         }
     }
-    
+
     func currentUserEmail() -> String? {
-        return checkerService.currentUserEmail()
+        return client.auth.currentSession?.user.email
     }
 }
+
+// MARK: - LoginInspector
 
 final class LoginInspector: LoginViewControllerDelegate {
 
@@ -85,10 +86,12 @@ final class LoginInspector: LoginViewControllerDelegate {
         checkerService.signUp(email: email, password: password, completion: completion)
     }
 
-    func currentUserEmail() -> String {
-        return checkerService.currentUserEmail() ?? ""
+    func currentUserEmail() -> String? {
+        return checkerService.currentUserEmail()
     }
 }
+
+// MARK: - Factory
 
 struct MyLoginFactory: LoginFactory {
 
