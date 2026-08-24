@@ -11,6 +11,7 @@ protocol CheckerServiceProtocol {
 protocol LoginViewControllerDelegate: AnyObject {
     func checkCredentials(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
     func signUp(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
+    func currentUserEmail() -> String?
 }
 
 protocol LoginFactory {
@@ -22,6 +23,12 @@ protocol LoginFactory {
 enum SupabaseConfig {
     static let projectURL = URL(string: "https://bkpdvuuocxvaofpstdbh.supabase.co")!
     static let anonKey = "sb_publishable_7BmY8_WU-1cOTTTiq8SrQg_IVGYAgYd"
+}
+
+
+// MARK: - Служба сессии
+protocol SessionServiceProtocol {
+    func currentUserEmail() -> String?
 }
 
 // MARK: - CheckerService
@@ -60,9 +67,11 @@ final class CheckerService: CheckerServiceProtocol {
             }
         }
     }
+    
+    func currentUserEmail() -> String? {
+        return checkerService.currentUserEmail()
+    }
 }
-
-// MARK: - LoginInspector (не меняется)
 
 final class LoginInspector: LoginViewControllerDelegate {
 
@@ -75,9 +84,11 @@ final class LoginInspector: LoginViewControllerDelegate {
     func signUp(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
         checkerService.signUp(email: email, password: password, completion: completion)
     }
-}
 
-// MARK: - Factory (не меняется)
+    func currentUserEmail() -> String {
+        return checkerService.currentUserEmail() ?? ""
+    }
+}
 
 struct MyLoginFactory: LoginFactory {
 

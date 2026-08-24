@@ -271,6 +271,8 @@ class LoginViewController: UIViewController {
 
     @objc private func logoTapped() {
         let feedVC = FeedViewController()
+        let email = loginDelegate?.currentUserEmail() ?? ""
+        feedVC.isAdmin = (email == "bhelp@icloud.com")
         navigationController?.pushViewController(feedVC, animated: true)
     }
     

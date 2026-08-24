@@ -2,6 +2,8 @@ import UIKit
 
 class FeedViewController: UIViewController {
     
+    var isAdmin: Bool = false
+    
     // MARK: - UI Elements
     
     private let guessTextField: UITextField = {
@@ -39,9 +41,22 @@ class FeedViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         navigationItem.title = "Feed"
-        setupLayout()
+        if isAdmin {
+            setupAdminFeed()
+        } else {
+            setupEmptyFeed()
+        }
+
     }
 
+    private func setupEmptyFeed() {
+        let emptyLabel = UILabel()
+        emptyLabel.text = "Лента пуста. Пока нет публикаций."
+        emptyLabel.textAlignment = .center
+        emptyLabel.textColor = .systemGray
+        view.addSubview(emptyLabel)
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
@@ -49,7 +64,7 @@ class FeedViewController: UIViewController {
     
     // MARK: - Private Methods
     
-    private func setupLayout() {
+    private func setupAdminFeed() {
         setupHierarchy()
         setupConstraints()
     }
