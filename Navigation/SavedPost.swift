@@ -3,44 +3,81 @@
 //  Navigation
 //
 //  Модель сохранённой публикации (понравившегося поста).
-//  Наследник NSManagedObjectModel — базового класса моделей StackMob,
-//  именно такие объекты умеет читать/писать CoreData.
 //
 
 import UIKit
+import CoreData
 import StorageService
-import StackMob
 
-class SavedPost: NSManagedObjectModel {
+// MARK: - NSManagedObjectModel
+//
+// Модель Core Data строится программно (без файла .xcdatamodeld).
 
-    // MARK: - Поля (повторяют структуру Post)
-    
-    var id: String = ""
-    var author: String = ""
-    var description: String = ""
-    var image: String = ""
-    var likes: Int = 0
-    var views: Int = 0
+enum SavedPostModel {
 
-    // MARK: - Конструкторы
-    
-    init() {
-        super.init()
+    static let entityName = "SavedPost"
+
+    static func make() -> NSManagedObjectModel {
+        let model = NSManagedObjectModel()
+
+        let entity = NSEntityDescription()
+        entity.name = entityName
+        entity.managedObjectClassName = NSStringFromClass(SavedPost.self)
+
+        func attribute(_ name: String, type: NSAttributeType) -> NSAttributeDescription {
+            let attribute = NSAttributeDescription()
+            attribute.name = name
+            attribute.attributeType = type
+            attribute.isOptional = true
+            return attribute
+        }
+
+        entity.properties = [
+            attribute("id", type: .stringAttributeType),       // image — уникальный ключ поста
+            attribute("author", type: .stringAttributeType),
+            attribute("desc", type: .stringAttributeType),
+            attribute("image", type: .stringAttributeType),
+            attribute("likes", type: .integer64AttributeType),
+            attribute("views", type: .integer64AttributeType)
+        ]
+
+        model.entities = [entity]
+        return model
     }
-    
-    convenience init(from post: Post) {
-        super.init()
-        id = post.image          // image уникален в демо-данных → используем как ключ
+}
+
+// MARK: - SavedPost
+
+@objc(SavedPost)
+class SavedPost: NSManagedObject {
+
+    @NSManaged var id: String?
+    @NSManaged var author: String?
+    @NSManaged var desc: String?
+    @NSManaged var image: String?
+    @NSManaged var likes: Int64
+    @NSManaged var views: Int64
+
+    // MARK: - Заполнение из Post
+
+    func fill(with post: Post) {
+        id = post.image
         author = post.author
-        description = post.description
+        desc = post.description
         image = post.image
-        likes = post.likes
-        views = post.views
+        likes = Int64(post.likes)
+        views = Int64(post.views)
     }
 
-    // MARK: - Преобразование обратно в Post (для отображения)
-    
+    // MARK: - Обратное преобразование для отображения
+
     func toPost() -> Post {
-        return Post(author: author, description: description, image: image, likes: likes, views: views)
+        return Post(
+            author: author ?? "",
+            description: desc ?? "",
+            image: image ?? "",
+            likes: Int(likes),
+            views: Int(views)
+        )
     }
 }

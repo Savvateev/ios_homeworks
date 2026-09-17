@@ -32,6 +32,24 @@ class PostTableViewCell: UITableViewCell {
         return label
     }()
 
+    // MARK: - Иконки из ассетов
+
+    private let likesIconImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "heart")
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+
+    private let viewsIconImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "eye")
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+
     private let likesLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16)
@@ -58,15 +76,20 @@ class PostTableViewCell: UITableViewCell {
         self.post = post
         authorLabel.text = post.author
         descriptionLabel.text = post.description
-        likesLabel.text = "Likes: \\(post.likes)"
-        viewsLabel.text = "Views: \\(post.views)"
-        postImageView.image = UIImage(named: post.image)
+        likesLabel.text = "\(post.likes)"
+        viewsLabel.text = "\(post.views)"
+        postImageView.image = UIImage(named: post.image) ?? UIImage()
+        //postImageView.image = UIImage(named: post.image)
+
+        // Есть лайки → красное сердечко, нет → обычное
+        likesIconImageView.image = UIImage(named: post.likes > 0 ? "red_heart" : "heart")
     }
 
     // MARK: - Жест «двойной тап» (UIGestureRecognizer)
 
     private func setupGestureRecognizer() {
-        let doubleTapRecognizer = UIDoubleTapGestureRecognizer(target: self, action: #selector(doubleTapped))
+        let doubleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(doubleTapped))
+        doubleTapRecognizer.numberOfTapsRequired = 2
         addGestureRecognizer(doubleTapRecognizer)
     }
 
@@ -75,13 +98,17 @@ class PostTableViewCell: UITableViewCell {
         onDoubleTap?(post)
     }
 
+    // MARK: - Layout
+
     private func setupLayout() {
         setupHierarchy()
         setupConstraints()
     }
 
     private func setupHierarchy() {
-        [authorLabel, postImageView, descriptionLabel, likesLabel, viewsLabel].forEach {
+        [authorLabel, postImageView, descriptionLabel,
+         likesIconImageView, likesLabel,
+         viewsIconImageView, viewsLabel].forEach {
             contentView.addSubview($0)
         }
     }
@@ -102,15 +129,31 @@ class PostTableViewCell: UITableViewCell {
             make.leading.trailing.equalToSuperview().inset(16)
         }
 
-        likesLabel.snp.makeConstraints { make in
-            make.top.equalTo(descriptionLabel.snp.bottom).offset(16)
+        // Группа «лайков» прижата к левому краю: [♥] 10
+        likesIconImageView.snp.makeConstraints { make in
+            make.centerY.equalTo(likesLabel.snp.centerY)
             make.leading.equalToSuperview().offset(16)
+            make.width.equalTo(18)
+            make.height.equalTo(18)
+        }
+
+        likesLabel.snp.makeConstraints { make in
+            make.leading.equalTo(likesIconImageView.snp.trailing).offset(6)
+            make.top.equalTo(descriptionLabel.snp.bottom).offset(16)
             make.bottom.equalToSuperview().offset(-16)
         }
 
-        viewsLabel.snp.makeConstraints { make in
-            make.top.equalTo(descriptionLabel.snp.bottom).offset(16)
+        // Группа «просмотров» прижата к правому краю: 5 [👁]
+        viewsIconImageView.snp.makeConstraints { make in
+            make.centerY.equalTo(viewsLabel.snp.centerY)
             make.trailing.equalToSuperview().offset(-16)
+            make.width.equalTo(18)
+            make.height.equalTo(18)
+        }
+
+        viewsLabel.snp.makeConstraints { make in
+            make.trailing.equalTo(viewsIconImageView.snp.leading).offset(-6)
+            make.top.equalTo(descriptionLabel.snp.bottom).offset(16)
             make.bottom.equalToSuperview().offset(-16)
         }
     }

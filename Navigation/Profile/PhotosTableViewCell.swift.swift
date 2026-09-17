@@ -1,4 +1,3 @@
-
 import UIKit
 
 class PhotosTableViewCell: UITableViewCell {
@@ -58,10 +57,10 @@ class PhotosTableViewCell: UITableViewCell {
     }
     
     private func setupPhotos() {
-        // Создаем 4 фотографии (имена 1, 2, 3, 4)
+        // Ряд из 4 фото — берём ассеты "1", "2", "3", "4"
         for i in 1...4 {
             let iv = UIImageView()
-            iv.image = UIImage(named: "\(i)")
+            iv.image = UIImage(named: "\(i)") ?? UIImage()
             iv.backgroundColor = .systemGray5
             iv.contentMode = .scaleAspectFill
             iv.layer.cornerRadius = 6
@@ -72,21 +71,17 @@ class PhotosTableViewCell: UITableViewCell {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // Ограничения для заголовка
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             
-            // для стрелки
             arrowImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
             arrowImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             arrowImageView.widthAnchor.constraint(equalToConstant: 24),
             
-            // для галереи
             photosStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
             photosStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             photosStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             photosStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
-            // Пропорция 1:4
             photosStackView.heightAnchor.constraint(equalTo: photosStackView.widthAnchor, multiplier: 0.25, constant: -6)
         ])
     }
