@@ -79,8 +79,6 @@ class LoginViewController: UIViewController {
     
     // Setup
     
-    
-    
     private func setupLayout() {
         setupHierarchy()
         setupSeparator()
@@ -254,19 +252,11 @@ class LoginViewController: UIViewController {
         }
     }
     
+    // MARK: - Навигация после входа
+    
     private func navigateToProfile() {
-        let profileVC = ProfileViewController()
         let email = loginDelegate?.currentUserEmail() ?? ""
-
-        let user = User(
-            login: email,
-            fullName: email,
-            avatar: UIImage(named: "test") ?? UIImage(),
-            status: "Online"
-        )
-        profileVC.configure(with: user)
-        profileVC.isAdmin = (email == "bhelp@icloud.com")
-        navigationController?.pushViewController(profileVC, animated: true)
+        showMainTabBar(email: email)
     }
 
     private func navigateToFeed() {
@@ -274,6 +264,45 @@ class LoginViewController: UIViewController {
         let email = loginDelegate?.currentUserEmail() ?? ""
         feedVC.isAdmin = (email == "bhelp@icloud.com")
         navigationController?.pushViewController(feedVC, animated: true)
+    }
+    
+    /// Собирает настоящий UITabBarController: Profile / Feed / Liked.
+    private func showMainTabBar(email: String) {
+        let isAdmin = (email == "bhelp@icloud.com")
+
+        let user = User(
+            login: email,
+            fullName: email,
+            avatar: UIImage(named: "test") ?? UIImage(),
+            status: "Online"
+        )
+
+        // 1) Profile
+        let profileVC = ProfileViewController()
+        profileVC.configure(with: user)
+        profileVC.isAdmin = isAdmin
+        let profileNav = UINavigationController(rootViewController: profileVC)
+        profileNav.tabBarItem = UITabBarItem(title: "Profile", image: nil, tag: 0)
+
+        // 2) Feed
+        let feedVC = FeedViewController()
+        feedVC.isAdmin = isAdmin
+        let feedNav = UINavigationController(rootViewController: feedVC)
+        feedNav.tabBarItem = UITabBarItem(title: "Feed", image: nil, tag: 1)
+
+        // 3) Liked — сохранённые посты
+        let likedVC = LikedPostsViewController()
+        let likedNav = UINavigationController(rootViewController: likedVC)
+        likedNav.tabBarItem = UITabBarItem(title: "Liked", image: UIImage(named: "heart"), tag: 2)
+
+        let tabBarController = UITabBarController()
+        tabBarController.viewControllers = [profileNav, feedNav, likedNav]
+
+        // Заменяем корневой контроллер окна на tab bar
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = scene.windows.first else { return }
+        window.rootViewController = tabBarController
+        window.makeKeyAndVisible()
     }
     
     private func showAlert(title: String, message: String) {
