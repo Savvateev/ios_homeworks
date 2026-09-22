@@ -128,12 +128,28 @@ class ProfileViewController: UIViewController {
     // MARK: - Лайк поста по двойному тапу
 
     private func savePost(_ post: Post) {
-        if savedPostsStore.save(post) {
-            showAlert(title: "Понравилось ❤️", message: "Пост «\\(post.author)» сохранён во вкладке «Liked»")
-        } else {
-            showAlert(title: "Уже сохранено", message: "Этот пост уже есть во вкладке «Liked»")
+        savedPostsStore.save(post) { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case .success(true):
+                self.showAlert(
+                    title: "Понравилось ❤️",
+                    message: "Пост «\(post.author)» сохранён во вкладке Liked"
+                )
+
+            case .success(false):
+                self.showAlert(
+                    title: "Уже сохранено",
+                    message: "Этот пост уже есть во вкладке Liked"
+                )
+
+            case .failure(let error):
+                self.showError(error)
+            }
         }
     }
+
 
     private func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -141,6 +157,23 @@ class ProfileViewController: UIViewController {
         alert.addAction(okAction)
         present(alert, animated: true)
     }
+    
+    private func showError(_ error: Error) {
+        let alert = UIAlertController(
+            title: "Ошибка",
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
+
+        alert.addAction(
+            UIAlertAction(
+                title: "OK",
+                style: .default
+            )
+        )
+        present(alert, animated: true)
+    }
+
 }
 
 // MARK: - UITableViewDataSource
@@ -174,6 +207,7 @@ extension ProfileViewController: UITableViewDataSource {
         }
     }
 }
+
 
 // MARK: - UITableViewDelegate
 
