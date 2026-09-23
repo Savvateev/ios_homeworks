@@ -1,4 +1,5 @@
 import UIKit
+import CoreData
 import StorageService
 
 final class LikedPostsViewController: UIViewController {
@@ -7,7 +8,8 @@ final class LikedPostsViewController: UIViewController {
 
     private let savedPostsStore = SavedPostsStore.shared
 
-    private var displayedPosts: [Post] = []
+    private var fetchedResultsController:
+        NSFetchedResultsController<SavedPost>!
 
     private var authorFilter: String?
 
@@ -39,7 +41,6 @@ final class LikedPostsViewController: UIViewController {
         label.textAlignment = .center
         label.textColor = .systemGray
         label.numberOfLines = 0
-
         label.translatesAutoresizingMaskIntoConstraints = false
 
         return label
@@ -55,14 +56,15 @@ final class LikedPostsViewController: UIViewController {
 
         setupNavigationBar()
         setupLayout()
-        reloadPosts()
+        setupFetchedResultsController()
+        performFetch()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        // Обновляем список после перехода во вкладку.
-        reloadPosts()
+        // Обновляем FRC после сохранения поста в другом экране.
+        performFetch()
     }
 
     // MARK: - Navigation Bar
@@ -86,8 +88,7 @@ final class LikedPostsViewController: UIViewController {
 
         clearFilterButton.accessibilityLabel = "Очистить фильтр"
 
-        // На NavigationBar будут две кнопки:
-        // поиск и очистка фильтра.
+        // Кнопка поиска и кнопка очистки фильтра.
         navigationItem.rightBarButtonItems = [
             clearFilterButton,
             searchButton
@@ -111,7 +112,7 @@ final class LikedPostsViewController: UIViewController {
                 equalTo: view.trailingAnchor
             ),
             tableView.bottomAnchor.constraint(
-                equalTo: view.bottomAnchor
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor
             ),
 
             emptyLabel.centerXAnchor.constraint(
@@ -131,23 +132,51 @@ final class LikedPostsViewController: UIViewController {
         ])
     }
 
-    // MARK: - Data
+    // MARK: - NSFetchedResultsController
 
-    private func reloadPosts() {
-        if let authorFilter = authorFilter {
-            displayedPosts = savedPostsStore.savedPosts(
-                byAuthor: authorFilter
-            )
-        } else {
-            displayedPosts = savedPostsStore.savedPosts()
+    private func setupFetchedResultsController() {
+        let fetchRequest = savedPostsStore.makeFetchRequest(
+            author: authorFilter
+        )
+
+        fetchedResultsController = NSFetchedResultsController<SavedPost>(
+            fetchRequest: fetchRequest,
+            managedObjectContext: savedPostsStore.viewContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+
+        fetchedResultsController.delegate = self
+    }
+
+    private func performFetch() {
+        guard let fetchedResultsController else {
+            return
         }
 
-        updateEmptyState()
-        tableView.reloadData()
+        do {
+            try fetchedResultsController.performFetch()
+            updateEmptyState()
+            tableView.reloadData()
+        } catch {
+            print("❌ Ошибка выполнения fetch: \(error)")
+            showError(error)
+        }
+    }
+
+    private func recreateFetchedResultsController() {
+        fetchedResultsController?.delegate = nil
+
+        setupFetchedResultsController()
+        performFetch()
     }
 
     private func updateEmptyState() {
-        if displayedPosts.isEmpty {
+        let postsCount = fetchedResultsController
+            .fetchedObjects?
+            .count ?? 0
+
+        if postsCount == 0 {
             if authorFilter == nil {
                 emptyLabel.text = "Нет понравившихся постов"
             } else {
@@ -180,20 +209,20 @@ final class LikedPostsViewController: UIViewController {
             style: .default
         ) { [weak self, weak alert] _ in
 
-            guard let self = self else { return }
+            guard let self else {
+                return
+            }
 
-            let author = alert?.textFields?.first?.text?
+            let author = alert?
+                .textFields?
+                .first?
+                .text?
                 .trimmingCharacters(
                     in: .whitespacesAndNewlines
                 ) ?? ""
 
-            if author.isEmpty {
-                self.authorFilter = nil
-            } else {
-                self.authorFilter = author
-            }
-
-            self.reloadPosts()
+            self.authorFilter = author.isEmpty ? nil : author
+            self.recreateFetchedResultsController()
         }
 
         let cancelAction = UIAlertAction(
@@ -207,11 +236,11 @@ final class LikedPostsViewController: UIViewController {
         present(alert, animated: true)
     }
 
-    // MARK: - Очистка фильтра
+    // MARK: - Clear Filter
 
     @objc private func clearFilterButtonTapped() {
         authorFilter = nil
-        reloadPosts()
+        recreateFetchedResultsController()
     }
 
     // MARK: - Error
@@ -242,7 +271,9 @@ extension LikedPostsViewController: UITableViewDataSource {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-        return displayedPosts.count
+        return fetchedResultsController
+            .fetchedObjects?
+            .count ?? 0
     }
 
     func tableView(
@@ -254,18 +285,20 @@ extension LikedPostsViewController: UITableViewDataSource {
             for: indexPath
         ) as! PostTableViewCell
 
-        let post = displayedPosts[indexPath.row]
+        let savedPost = fetchedResultsController.object(
+            at: indexPath
+        )
 
-        cell.configure(with: post)
+        cell.configure(
+            with: savedPost.toPost()
+        )
 
-        // Двойной тап в сохранённых постах не нужен.
+        // Повторное сохранение из вкладки Liked не требуется.
         cell.onDoubleTap = nil
 
         return cell
     }
 }
-
-// MARK: - UITableViewDelegate
 
 extension LikedPostsViewController: UITableViewDelegate {
 
@@ -291,22 +324,38 @@ extension LikedPostsViewController: UITableViewDelegate {
             title: "Удалить"
         ) { [weak self] _, _, completion in
 
-            guard let self = self else {
+            guard let self else {
                 completion(false)
                 return
             }
 
-            let post = self.displayedPosts[indexPath.row]
+            // Берём объект из FRC.
+            let savedPost = self.fetchedResultsController.object(
+                at: indexPath
+            )
 
-            self.savedPostsStore.delete(post) { [weak self] result in
-                guard let self = self else {
+            // Передаём в backgroundContext только objectID.
+            let objectID = savedPost.objectID
+
+            self.savedPostsStore.delete(
+                objectID: objectID
+            ) { [weak self] result in
+
+                guard let self else {
                     completion(false)
                     return
                 }
 
                 switch result {
                 case .success:
-                    self.reloadPosts()
+                    /*
+                     Не вызываем tableView.deleteRows вручную.
+
+                     После удаления в backgroundContext:
+                     1. изменение попадёт в viewContext;
+                     2. NSFetchedResultsController получит событие;
+                     3. NSFetchedResultsControllerDelegate сам удалит строку.
+                     */
                     completion(true)
 
                 case .failure(let error):
@@ -325,5 +374,76 @@ extension LikedPostsViewController: UITableViewDelegate {
         configuration.performsFirstActionWithFullSwipe = true
 
         return configuration
+    }
+}
+
+// MARK: - NSFetchedResultsControllerDelegate
+
+extension LikedPostsViewController:
+    NSFetchedResultsControllerDelegate {
+
+    func controllerWillChangeContent(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>
+    ) {
+        tableView.beginUpdates()
+    }
+
+    func controller(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+        didChange anObject: Any,
+        at indexPath: IndexPath?,
+        for type: NSFetchedResultsChangeType,
+        newIndexPath: IndexPath?
+    ) {
+        switch type {
+        case .insert:
+            guard let newIndexPath else {
+                return
+            }
+
+            tableView.insertRows(
+                at: [newIndexPath],
+                with: .automatic
+            )
+
+        case .delete:
+            guard let indexPath else {
+                return
+            }
+
+            tableView.deleteRows(
+                at: [indexPath],
+                with: .automatic
+            )
+
+        case .update:
+            if let indexPath {
+                tableView.reloadRows(
+                    at: [indexPath],
+                    with: .automatic
+                )
+            }
+
+        case .move:
+            guard let indexPath,
+                  let newIndexPath else {
+                return
+            }
+
+            tableView.moveRow(
+                at: indexPath,
+                to: newIndexPath
+            )
+
+        @unknown default:
+            tableView.reloadData()
+        }
+    }
+
+    func controllerDidChangeContent(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>
+    ) {
+        tableView.endUpdates()
+        updateEmptyState()
     }
 }

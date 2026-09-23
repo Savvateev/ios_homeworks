@@ -21,10 +21,12 @@ final class SavedPostsStore {
             fatalError("Не найдено описание Core Data хранилища")
         }
 
-        // Автоматическая миграция существующего хранилища.
+        // Автоматическая миграция хранилища.
         storeDescription.shouldMigrateStoreAutomatically = true
         storeDescription.shouldInferMappingModelAutomatically = true
 
+        // Изменения из backgroundContext автоматически попадают
+        // в viewContext, который использует NSFetchedResultsController.
         container.viewContext.automaticallyMergesChangesFromParent = true
         container.viewContext.mergePolicy =
             NSMergeByPropertyObjectTrumpMergePolicy
@@ -42,23 +44,72 @@ final class SavedPostsStore {
 
     // MARK: - Contexts
 
-    private var viewContext: NSManagedObjectContext {
+    /// Контекст для NSFetchedResultsController.
+    /// Использовать только в основном потоке.
+    var viewContext: NSManagedObjectContext {
         persistentContainer.viewContext
     }
 
+    /// Контекст для сохранения и удаления.
     private lazy var backgroundContext: NSManagedObjectContext = {
         let context = persistentContainer.newBackgroundContext()
+
         context.mergePolicy =
             NSMergeByPropertyObjectTrumpMergePolicy
+
         return context
     }()
+
+    // MARK: - Fetch Request
+
+    /// Fetch Request используется NSFetchedResultsController.
+    ///
+    /// author:
+    /// - nil — получить все посты;
+    /// - строка — получить посты указанного автора.
+    func makeFetchRequest(
+        author: String? = nil
+    ) -> NSFetchRequest<SavedPost> {
+        let request = NSFetchRequest<SavedPost>(
+            entityName: SavedPostModel.entityName
+        )
+
+        if let author = author,
+           !author.trimmingCharacters(
+                in: .whitespacesAndNewlines
+           ).isEmpty {
+
+            request.predicate = NSPredicate(
+                format: "author CONTAINS[cd] %@",
+                author
+            )
+        }
+
+        request.sortDescriptors = [
+            NSSortDescriptor(
+                key: "author",
+                ascending: true
+            ),
+            NSSortDescriptor(
+                key: "id",
+                ascending: true
+            )
+        ]
+
+        // Небольшая оптимизация для большого количества записей.
+        request.fetchBatchSize = 20
+        request.fetchLimit = 0
+
+        return request
+    }
 
     // MARK: - Save
 
     /// Сохранение выполняется в backgroundContext.
     ///
     /// success(true)  — пост сохранён;
-    /// success(false) — пост уже существует.
+    /// success(false) — пост уже существует;
+    /// failure        — произошла ошибка Core Data.
     func save(
         _ post: Post,
         completion: @escaping (Result<Bool, Error>) -> Void
@@ -74,13 +125,13 @@ final class SavedPostsStore {
                 format: "id == %@",
                 post.image
             )
+
             request.fetchLimit = 1
 
             do {
-                let existingPosts =
-                    try self.backgroundContext.fetch(request)
+                let existingPosts = try self.backgroundContext.fetch(request)
 
-                // Не сохраняем один пост повторно.
+                // Защита от повторного сохранения одного поста.
                 if !existingPosts.isEmpty {
                     DispatchQueue.main.async {
                         completion(.success(false))
@@ -110,88 +161,25 @@ final class SavedPostsStore {
         }
     }
 
-    // MARK: - Read
-
-    /// Чтение всех сохранённых постов.
-    func savedPosts() -> [Post] {
-        let request = NSFetchRequest<SavedPost>(
-            entityName: SavedPostModel.entityName
-        )
-
-        request.sortDescriptors = [
-            NSSortDescriptor(
-                key: "author",
-                ascending: true
-            )
-        ]
-
-        do {
-            let objects = try viewContext.fetch(request)
-            return objects.map { $0.toPost() }
-
-        } catch {
-            print("❌ Ошибка чтения постов: \(error)")
-            return []
-        }
-    }
-
-    // MARK: - Search by author
-
-    /// Поиск сохранённых постов по автору.
-    /// Поиск нечувствителен к регистру.
-    func savedPosts(byAuthor author: String) -> [Post] {
-        let request = NSFetchRequest<SavedPost>(
-            entityName: SavedPostModel.entityName
-        )
-
-        request.predicate = NSPredicate(
-            format: "author ==[c] %@",
-            author
-        )
-
-        request.sortDescriptors = [
-            NSSortDescriptor(
-                key: "author",
-                ascending: true
-            )
-        ]
-
-        do {
-            let objects = try viewContext.fetch(request)
-            return objects.map { $0.toPost() }
-
-        } catch {
-            print("❌ Ошибка поиска постов: \(error)")
-            return []
-        }
-    }
-
     // MARK: - Delete
 
-    /// Удаление выполняется в backgroundContext.
+    /// Удаляет объект по objectID в backgroundContext.
+    ///
+    /// Важно: объект SavedPost из viewContext нельзя напрямую передавать
+    /// в backgroundContext. Поэтому передаём только его objectID.
     func delete(
-        _ post: Post,
+        objectID: NSManagedObjectID,
         completion: @escaping (Result<Void, Error>) -> Void
     ) {
         backgroundContext.perform { [weak self] in
             guard let self = self else { return }
 
-            let request = NSFetchRequest<SavedPost>(
-                entityName: SavedPostModel.entityName
-            )
-
-            request.predicate = NSPredicate(
-                format: "id == %@",
-                post.image
-            )
-
             do {
-                let objects =
-                    try self.backgroundContext.fetch(request)
+                let object = try self.backgroundContext.existingObject(
+                    with: objectID
+                )
 
-                for object in objects {
-                    self.backgroundContext.delete(object)
-                }
+                self.backgroundContext.delete(object)
 
                 if self.backgroundContext.hasChanges {
                     try self.backgroundContext.save()
@@ -211,7 +199,7 @@ final class SavedPostsStore {
         }
     }
 
-    // MARK: - Check duplicate
+    // MARK: - Duplicate Check
 
     func isSaved(_ post: Post) -> Bool {
         let request = NSFetchRequest<SavedPost>(
@@ -222,6 +210,7 @@ final class SavedPostsStore {
             format: "id == %@",
             post.image
         )
+
         request.fetchLimit = 1
 
         do {
