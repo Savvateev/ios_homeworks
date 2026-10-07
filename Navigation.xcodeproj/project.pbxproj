@@ -26,6 +26,13 @@
 			remoteGlobalIDString = 544C5CCF2FED265B00EC49C5;
 			remoteInfo = StorageService;
 		};
+		54FD3A613076438900E219A2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 547926EA2F988973005399A9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 547926F12F988973005399A9;
+			remoteInfo = Navigation;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -45,6 +52,7 @@
 /* Begin PBXFileReference section */
 		544C5CD02FED265B00EC49C5 /* StorageService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StorageService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		547926F22F988973005399A9 /* Navigation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Navigation.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		54FD3A5D3076438900E219A2 /* NavigationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NavigationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -69,6 +77,11 @@
 				547927042F988975005399A9 /* Exceptions for "Navigation" folder in "Navigation" target */,
 			);
 			path = Navigation;
+			sourceTree = "<group>";
+		};
+		54FD3A5E3076438900E219A2 /* NavigationTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = NavigationTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -96,6 +109,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		54FD3A5A3076438900E219A2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -104,6 +124,7 @@
 			children = (
 				547926F42F988973005399A9 /* Navigation */,
 				544C5CD12FED265B00EC49C5 /* StorageService */,
+				54FD3A5E3076438900E219A2 /* NavigationTests */,
 				54D2E1CC2FF5FA9100409AA7 /* Frameworks */,
 				547926F32F988973005399A9 /* Products */,
 			);
@@ -114,6 +135,7 @@
 			children = (
 				547926F22F988973005399A9 /* Navigation.app */,
 				544C5CD02FED265B00EC49C5 /* StorageService.framework */,
+				54FD3A5D3076438900E219A2 /* NavigationTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -192,6 +214,29 @@
 			productReference = 547926F22F988973005399A9 /* Navigation.app */;
 			productType = "com.apple.product-type.application";
 		};
+		54FD3A5C3076438900E219A2 /* NavigationTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 54FD3A633076438900E219A2 /* Build configuration list for PBXNativeTarget "NavigationTests" */;
+			buildPhases = (
+				54FD3A593076438900E219A2 /* Sources */,
+				54FD3A5A3076438900E219A2 /* Frameworks */,
+				54FD3A5B3076438900E219A2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				54FD3A623076438900E219A2 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				54FD3A5E3076438900E219A2 /* NavigationTests */,
+			);
+			name = NavigationTests;
+			packageProductDependencies = (
+			);
+			productName = NavigationTests;
+			productReference = 54FD3A5D3076438900E219A2 /* NavigationTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -199,7 +244,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2650;
+				LastSwiftUpdateCheck = 2700;
 				LastUpgradeCheck = 2660;
 				TargetAttributes = {
 					544C5CCF2FED265B00EC49C5 = {
@@ -207,6 +252,10 @@
 					};
 					547926F12F988973005399A9 = {
 						CreatedOnToolsVersion = 26.4.1;
+					};
+					54FD3A5C3076438900E219A2 = {
+						CreatedOnToolsVersion = 27.0;
+						TestTargetID = 547926F12F988973005399A9;
 					};
 				};
 			};
@@ -231,6 +280,7 @@
 			targets = (
 				547926F12F988973005399A9 /* Navigation */,
 				544C5CCF2FED265B00EC49C5 /* StorageService */,
+				54FD3A5C3076438900E219A2 /* NavigationTests */,
 			);
 		};
 /* End PBXProject section */
@@ -244,6 +294,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		547926F02F988973005399A9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54FD3A5B3076438900E219A2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -267,6 +324,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		54FD3A593076438900E219A2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -274,6 +338,11 @@
 			isa = PBXTargetDependency;
 			target = 544C5CCF2FED265B00EC49C5 /* StorageService */;
 			targetProxy = 544C5CD62FED265C00EC49C5 /* PBXContainerItemProxy */;
+		};
+		54FD3A623076438900E219A2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 547926F12F988973005399A9 /* Navigation */;
+			targetProxy = 54FD3A613076438900E219A2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -537,6 +606,50 @@
 			};
 			name = Release;
 		};
+		54FD3A643076438900E219A2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 69G4ME9XB3;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = PavelSawateev.NavigationTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Navigation.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Navigation";
+			};
+			name = Debug;
+		};
+		54FD3A653076438900E219A2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 69G4ME9XB3;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = PavelSawateev.NavigationTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Navigation.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Navigation";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -563,6 +676,15 @@
 			buildConfigurations = (
 				547927062F988975005399A9 /* Debug */,
 				547927072F988975005399A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		54FD3A633076438900E219A2 /* Build configuration list for PBXNativeTarget "NavigationTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				54FD3A643076438900E219A2 /* Debug */,
+				54FD3A653076438900E219A2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

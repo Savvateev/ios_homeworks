@@ -42,7 +42,7 @@ class FeedViewController: UIViewController {
 
     // MARK: - Private Properties
 
-    private let feedModel = FeedModel(secretWord: "password")
+    private let viewModel = FeedViewModel()
 
     // MARK: - Lifecycle
 
@@ -90,6 +90,7 @@ class FeedViewController: UIViewController {
                 constant: -16
             ),
         ])
+
         emptyLabel.heightAnchor.constraint(equalToConstant: 30)
     }
 
@@ -158,24 +159,27 @@ class FeedViewController: UIViewController {
     }
 
     private func checkGuess() {
-        guard let text = guessTextField.text, !text.isEmpty else {
+        viewModel.check(word: guessTextField.text ?? "")
+
+        switch viewModel.state {
+        case .waiting:
+            break
+
+        case .emptyInput:
             resultLabel.text = NSLocalizedString(
                 "feed.result.enter_word",
                 comment: "Message shown when no word was entered"
             )
             resultLabel.textColor = .orange
-            return
-        }
 
-        let isCorrect = feedModel.check(word: text)
-
-        if isCorrect {
+        case .correct:
             resultLabel.text = NSLocalizedString(
                 "feed.result.correct",
                 comment: "Correct answer message"
             )
             resultLabel.textColor = .systemGreen
-        } else {
+
+        case .incorrect:
             resultLabel.text = NSLocalizedString(
                 "feed.result.wrong",
                 comment: "Incorrect answer message"

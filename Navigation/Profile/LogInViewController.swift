@@ -45,18 +45,21 @@ class LoginViewController: UIViewController {
     )
 
     private lazy var passwordTextField: UITextField = {
-        let tf = createTextField(
+        let textField = createTextField(
             placeholder: NSLocalizedString(
                 "login.password.placeholder",
                 comment: "Password text field placeholder"
             )
         )
-        tf.isSecureTextEntry = true
-        return tf
+        textField.isSecureTextEntry = true
+        return textField
     }()
 
     private lazy var loginButton = CustomButton(
-        title: NSLocalizedString("login.button", comment: "Login button title"),
+        title: NSLocalizedString(
+            "login.button",
+            comment: "Login button title"
+        ),
         titleColor: .white,
         bgImage: UIImage(named: "blue_pixel"),
         cornerRadius: 10
@@ -69,7 +72,7 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        self.navigationController?.isNavigationBarHidden = true
+        navigationController?.isNavigationBarHidden = true
         setupLayout()
         setupLogoTap()
         setupTextFieldObservers()
@@ -78,12 +81,14 @@ class LoginViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(keyboardWillShow),
             name: UIResponder.keyboardWillShowNotification,
             object: nil
         )
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(keyboardWillHide),
@@ -97,7 +102,7 @@ class LoginViewController: UIViewController {
         NotificationCenter.default.removeObserver(self)
     }
 
-    // Setup
+    // MARK: - Setup
 
     private func setupLayout() {
         setupHierarchy()
@@ -126,19 +131,29 @@ class LoginViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             separator.heightAnchor.constraint(equalToConstant: 0.5),
-            separator.leadingAnchor.constraint(equalTo: inputStackView.leadingAnchor),
-            separator.trailingAnchor.constraint(equalTo: inputStackView.trailingAnchor),
-            separator.centerYAnchor.constraint(equalTo: inputStackView.centerYAnchor)
+            separator.leadingAnchor.constraint(
+                equalTo: inputStackView.leadingAnchor
+            ),
+            separator.trailingAnchor.constraint(
+                equalTo: inputStackView.trailingAnchor
+            ),
+            separator.centerYAnchor.constraint(
+                equalTo: inputStackView.centerYAnchor
+            )
         ])
     }
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             // ScrollView & ContentView
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.topAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.topAnchor
+            ),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            scrollView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor
+            ),
 
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
@@ -147,25 +162,51 @@ class LoginViewController: UIViewController {
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
 
             // Logo
-            logoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 120),
-            logoImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            logoImageView.topAnchor.constraint(
+                equalTo: contentView.topAnchor,
+                constant: 120
+            ),
+            logoImageView.centerXAnchor.constraint(
+                equalTo: contentView.centerXAnchor
+            ),
             logoImageView.widthAnchor.constraint(equalToConstant: 100),
             logoImageView.heightAnchor.constraint(equalToConstant: 100),
 
             // Input Fields Container
-            inputStackView.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 120),
-            inputStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            inputStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            inputStackView.topAnchor.constraint(
+                equalTo: logoImageView.bottomAnchor,
+                constant: 120
+            ),
+            inputStackView.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor,
+                constant: 16
+            ),
+            inputStackView.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: -16
+            ),
             inputStackView.heightAnchor.constraint(equalToConstant: 100),
 
             // Button
-            loginButton.topAnchor.constraint(equalTo: inputStackView.bottomAnchor, constant: 16),
-            loginButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            loginButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            loginButton.topAnchor.constraint(
+                equalTo: inputStackView.bottomAnchor,
+                constant: 16
+            ),
+            loginButton.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor,
+                constant: 16
+            ),
+            loginButton.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: -16
+            ),
             loginButton.heightAnchor.constraint(equalToConstant: 50),
 
             // Замыкающий констрейнт для ScrollView
-            loginButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
+            loginButton.bottomAnchor.constraint(
+                equalTo: contentView.bottomAnchor,
+                constant: -16
+            )
         ])
     }
 
@@ -177,7 +218,9 @@ class LoginViewController: UIViewController {
         textField.tintColor = UIColor(named: "accentColor")
         textField.autocapitalizationType = .none
 
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 50))
+        let paddingView = UIView(
+            frame: CGRect(x: 0, y: 0, width: 10, height: 50)
+        )
         textField.leftView = paddingView
         textField.leftViewMode = .always
 
@@ -187,8 +230,16 @@ class LoginViewController: UIViewController {
     // MARK: - TextField Observers
 
     private func setupTextFieldObservers() {
-        loginTextField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
-        passwordTextField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
+        loginTextField.addTarget(
+            self,
+            action: #selector(textFieldChanged),
+            for: .editingChanged
+        )
+        passwordTextField.addTarget(
+            self,
+            action: #selector(textFieldChanged),
+            for: .editingChanged
+        )
     }
 
     @objc private func textFieldChanged() {
@@ -201,12 +252,15 @@ class LoginViewController: UIViewController {
         loginButton.isEnabled = !email.isEmpty && !password.isEmpty
     }
 
-    // Actions
+    // MARK: - Actions
 
     private func loginButtonTouch() {
         guard let email = loginTextField.text, !email.isEmpty else {
             showAlert(
-                title: NSLocalizedString("login.error.title", comment: "Login error title"),
+                title: NSLocalizedString(
+                    "login.error.title",
+                    comment: "Login error title"
+                ),
                 message: NSLocalizedString(
                     "login.error.email_required",
                     comment: "Message shown when email is missing"
@@ -217,7 +271,10 @@ class LoginViewController: UIViewController {
 
         guard let password = passwordTextField.text, !password.isEmpty else {
             showAlert(
-                title: NSLocalizedString("login.error.title", comment: "Login error title"),
+                title: NSLocalizedString(
+                    "login.error.title",
+                    comment: "Login error title"
+                ),
                 message: NSLocalizedString(
                     "login.error.password_required",
                     comment: "Message shown when password is missing"
@@ -226,9 +283,12 @@ class LoginViewController: UIViewController {
             return
         }
 
-        guard let loginDelegate = loginDelegate else {
+        guard let loginDelegate else {
             showAlert(
-                title: NSLocalizedString("login.error.title", comment: "Login error title"),
+                title: NSLocalizedString(
+                    "login.error.title",
+                    comment: "Login error title"
+                ),
                 message: NSLocalizedString(
                     "login.error.service_unavailable",
                     comment: "Message shown when the login service is unavailable"
@@ -239,77 +299,51 @@ class LoginViewController: UIViewController {
 
         loginButton.isEnabled = false
 
-        loginDelegate.checkCredentials(email: email, password: password) { [weak self] result in
-            guard let self = self else { return }
+        let viewModel = LoginViewModel(
+            service: loginDelegate,
+            shouldAttemptSignUp: { error in
+                let authError = error as? Supabase.AuthError
+                return authError?.errorCode.rawValue == "invalid_credentials"
+            },
+            isAlreadyRegistered: { error in
+                let authError = error as? Supabase.AuthError
+                let code = authError?.errorCode.rawValue
+
+                return code == "user_already_exists"
+                    || code == "email_taken"
+                    || code == "email_exists"
+            }
+        )
+
+        viewModel.login(email: email, password: password) { [weak self] result in
+            guard let self else { return }
+
             DispatchQueue.main.async {
+                self.loginButton.isEnabled = true
+
                 switch result {
                 case .success:
                     self.navigateToProfile()
 
                 case .failure(let error):
-                    let authError = error as? Supabase.AuthError
-                    let codeRaw = authError?.errorCode.rawValue ?? ""
+                    print("🔴 Login error: \(error.localizedDescription)")
 
-                    if codeRaw == "invalid_credentials" {
-                        self.signUpAndNavigate(email: email, password: password)
-                    } else {
-                        print("🔴 Supabase error: \(authError?.message ?? error.localizedDescription)")
-                        print("🔴 ErrorCode: \(codeRaw)")
-                        self.showAlert(
-                            title: NSLocalizedString(
-                                "login.error.signin_title",
-                                comment: "Sign-in error title"
-                            ),
-                            message: NSLocalizedString(
-                                "login.error.signin_message",
-                                comment: "Sign-in error message"
-                            )
+                    self.showAlert(
+                        title: NSLocalizedString(
+                            "error.generic",
+                            comment: "Generic error title"
+                        ),
+                        message: NSLocalizedString(
+                            "login.error.signin_message",
+                            comment: "Sign-in error message"
                         )
-                    }
+                    )
                 }
             }
         }
     }
 
-    private func signUpAndNavigate(email: String, password: String) {
-        guard let loginDelegate = loginDelegate else { return }
-
-        loginDelegate.signUp(email: email, password: password) { [weak self] result in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                switch result {
-                case .success:
-                    self.navigateToProfile()
-
-                case .failure(let error):
-                    let authError = error as? Supabase.AuthError
-                    let codeRaw = authError?.errorCode.rawValue ?? ""
-
-                    // Пользователь уже зарегистрирован → открываем приложение.
-                    if codeRaw == "user_already_exists"
-                        || codeRaw == "email_taken"
-                        || codeRaw == "email_exists" {
-                        self.navigateToProfile()
-                    } else {
-                        print("🔴 Supabase signup error: \(authError?.message ?? error.localizedDescription)")
-                        print("🔴 ErrorCode: \(codeRaw)")
-                        self.showAlert(
-                            title: NSLocalizedString(
-                                "login.error.signup_title",
-                                comment: "Sign-up error title"
-                            ),
-                            message: NSLocalizedString(
-                                "login.error.signup_message",
-                                comment: "Sign-up error message"
-                            )
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    // MARK: - Навигация после входа
+    // MARK: - Navigation after login
 
     private func navigateToProfile() {
         let email = loginDelegate?.currentUserEmail() ?? ""
@@ -341,9 +375,13 @@ class LoginViewController: UIViewController {
         let profileVC = ProfileViewController()
         profileVC.configure(with: user)
         profileVC.isAdmin = isAdmin
+
         let profileNav = UINavigationController(rootViewController: profileVC)
         profileNav.tabBarItem = UITabBarItem(
-            title: NSLocalizedString("tab.profile", comment: "Profile tab title"),
+            title: NSLocalizedString(
+                "tab.profile",
+                comment: "Profile tab title"
+            ),
             image: nil,
             tag: 0
         )
@@ -351,9 +389,13 @@ class LoginViewController: UIViewController {
         // 2) Feed
         let feedVC = FeedViewController()
         feedVC.isAdmin = isAdmin
+
         let feedNav = UINavigationController(rootViewController: feedVC)
         feedNav.tabBarItem = UITabBarItem(
-            title: NSLocalizedString("tab.feed", comment: "Feed tab title"),
+            title: NSLocalizedString(
+                "tab.feed",
+                comment: "Feed tab title"
+            ),
             image: nil,
             tag: 1
         )
@@ -362,34 +404,56 @@ class LoginViewController: UIViewController {
         let likedVC = LikedPostsViewController()
         let likedNav = UINavigationController(rootViewController: likedVC)
         likedNav.tabBarItem = UITabBarItem(
-            title: NSLocalizedString("tab.liked", comment: "Liked posts tab title"),
+            title: NSLocalizedString(
+                "tab.liked",
+                comment: "Liked posts tab title"
+            ),
             image: UIImage(named: "heart"),
             tag: 2
         )
 
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [profileNav, feedNav, likedNav]
+        tabBarController.viewControllers = [
+            profileNav,
+            feedNav,
+            likedNav
+        ]
 
         // Заменяем корневой контроллер окна на tab bar
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = scene.windows.first else { return }
+              let window = scene.windows.first else {
+            return
+        }
+
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
     }
 
     private func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+
         let okAction = UIAlertAction(
-            title: NSLocalizedString("common.ok", comment: "OK button"),
+            title: NSLocalizedString(
+                "common.ok",
+                comment: "OK button"
+            ),
             style: .default
         )
+
         alert.addAction(okAction)
         present(alert, animated: true)
     }
 
-    // обработка нажатия на лого
+    // Обработка нажатия на лого
     private func setupLogoTap() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(logoTapped))
+        let tapGesture = UITapGestureRecognizer(
+            target: self,
+            action: #selector(logoTapped)
+        )
         logoImageView.isUserInteractionEnabled = true
         logoImageView.addGestureRecognizer(tapGesture)
     }
@@ -401,14 +465,23 @@ class LoginViewController: UIViewController {
         navigationController?.pushViewController(feedVC, animated: true)
     }
 
-    // Keyboard Handling
+    // MARK: - Keyboard Handling
 
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let userInfo = notification.userInfo,
-              let keyboardFrameValue = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+              let keyboardFrameValue = userInfo[
+                UIResponder.keyboardFrameEndUserInfoKey
+              ] as? NSValue else {
+            return
+        }
 
         let keyboardHeight = keyboardFrameValue.cgRectValue.height
-        let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
+        let contentInsets = UIEdgeInsets(
+            top: 0,
+            left: 0,
+            bottom: keyboardHeight,
+            right: 0
+        )
 
         scrollView.contentInset = contentInsets
         scrollView.scrollIndicatorInsets = contentInsets
@@ -420,7 +493,7 @@ class LoginViewController: UIViewController {
     }
 }
 
-// Extensions
+// MARK: - UIImage
 
 extension UIImage {
     func withAlpha(_ value: CGFloat) -> UIImage? {

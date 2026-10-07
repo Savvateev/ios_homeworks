@@ -1,21 +1,18 @@
-//
-//  FeedModel.swift
-//  Navigation
-//
-//  Created by Pavel Savvateev on 28.07.2026.
-//
-
 import Foundation
 
-class FeedModel {
-    
+protocol FeedModelProtocol {
+    func check(word: String) -> Bool
+}
+
+final class FeedModel: FeedModelProtocol {
+
     private let secretWord: String
-    
+
     init(secretWord: String) {
-        self.secretWord = "word"
+        self.secretWord = secretWord
     }
-    
+
     func check(word: String) -> Bool {
-        return word.lowercased() == secretWord.lowercased()
+        word.lowercased() == secretWord.lowercased()
     }
 }

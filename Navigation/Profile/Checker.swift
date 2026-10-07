@@ -2,14 +2,34 @@ import Foundation
 import Supabase
 
 protocol CheckerServiceProtocol {
-    func checkCredentials(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
-    func signUp(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
+    func checkCredentials(
+        email: String,
+        password: String,
+        completion: @escaping (Result<Void, Error>) -> Void
+    )
+
+    func signUp(
+        email: String,
+        password: String,
+        completion: @escaping (Result<Void, Error>) -> Void
+    )
+
     func currentUserEmail() -> String?
 }
 
 protocol LoginViewControllerDelegate: AnyObject {
-    func checkCredentials(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
-    func signUp(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void)
+    func checkCredentials(
+        email: String,
+        password: String,
+        completion: @escaping (Result<Void, Error>) -> Void
+    )
+
+    func signUp(
+        email: String,
+        password: String,
+        completion: @escaping (Result<Void, Error>) -> Void
+    )
+
     func currentUserEmail() -> String?
 }
 
@@ -20,8 +40,12 @@ protocol LoginFactory {
 // MARK: - Конфигурация Supabase
 
 enum SupabaseConfig {
-    static let projectURL = URL(string: "https://bkpdvuuocxvaofpstdbh.supabase.co")!
-    static let anonKey = "sb_publishable_7BmY8_WU-1cOTTTiq8SrQg_IVGYAgYd"
+    static let projectURL = URL(
+        string: "https://bkpdvuuocxvaofpstdbh.supabase.co"
+    )!
+
+    static let anonKey =
+        "sb_publishable_7BmY8_WU-1cOTTTiq8SrQg_IVGYAgYd"
 }
 
 // MARK: - Служба сессии
@@ -45,30 +69,44 @@ final class CheckerService: CheckerServiceProtocol {
         )
     }
 
-    func checkCredentials(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    func checkCredentials(
+        email: String,
+        password: String,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
         Task {
             do {
-                let _ = try await client.auth.signIn(email: email, password: password)
+                let _ = try await client.auth.signIn(
+                    email: email,
+                    password: password
+                )
                 completion(.success(()))
-            } catch let error {
+            } catch {
                 completion(.failure(error))
             }
         }
     }
 
-    func signUp(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    func signUp(
+        email: String,
+        password: String,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
         Task {
             do {
-                let _ = try await client.auth.signUp(email: email, password: password)
+                let _ = try await client.auth.signUp(
+                    email: email,
+                    password: password
+                )
                 completion(.success(()))
-            } catch let error {
+            } catch {
                 completion(.failure(error))
             }
         }
     }
 
     func currentUserEmail() -> String? {
-        return client.auth.currentSession?.user.email
+        client.auth.currentSession?.user.email
     }
 }
 
@@ -78,16 +116,32 @@ final class LoginInspector: LoginViewControllerDelegate {
 
     private let checkerService = CheckerService.shared
 
-    func checkCredentials(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        checkerService.checkCredentials(email: email, password: password, completion: completion)
+    func checkCredentials(
+        email: String,
+        password: String,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        checkerService.checkCredentials(
+            email: email,
+            password: password,
+            completion: completion
+        )
     }
 
-    func signUp(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        checkerService.signUp(email: email, password: password, completion: completion)
+    func signUp(
+        email: String,
+        password: String,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        checkerService.signUp(
+            email: email,
+            password: password,
+            completion: completion
+        )
     }
 
     func currentUserEmail() -> String? {
-        return checkerService.currentUserEmail()
+        checkerService.currentUserEmail()
     }
 }
 
@@ -96,6 +150,6 @@ final class LoginInspector: LoginViewControllerDelegate {
 struct MyLoginFactory: LoginFactory {
 
     func makeLoginInspector() -> LoginInspector {
-        return LoginInspector()
+        LoginInspector()
     }
 }
