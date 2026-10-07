@@ -38,7 +38,10 @@ class ProfileViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "Profile"
+        navigationItem.title = NSLocalizedString(
+            "profile.title",
+            comment: "Profile screen title"
+        )
         setupLayout()
         bindViewModel()
         if isAdmin {
@@ -62,7 +65,10 @@ class ProfileViewController: UIViewController {
 
     private func setupEmptyMessage() {
         let emptyLabel = UILabel()
-        emptyLabel.text = "Здесь пока ничего нет"
+        emptyLabel.text = NSLocalizedString(
+            "profile.empty",
+            comment: "Empty profile message"
+        )
         emptyLabel.textAlignment = .center
         emptyLabel.textColor = .systemGray
         emptyLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -79,10 +85,46 @@ class ProfileViewController: UIViewController {
 
     private func loadPosts() {
         let posts = [
-            Post(author: "LeoTolstoy", description: "пишу новый роман", image: "leotolstoy", likes: 10, views: 100),
-            Post(author: "Medinsky", description: "переписываю историю", image: "medinsky", likes: 0, views: 1000),
-            Post(author: "Selhoznadzor", description: "запрещаю армянскую форель", image: "rshn", likes: 5, views: 120),
-            Post(author: "Roskomnadzor", description: "блокирую интернет", image: "rkn", likes: 1, views: 10000)
+            Post(
+                author: "LeoTolstoy",
+                description: NSLocalizedString(
+                    "post.description.leo",
+                    comment: "Sample post description"
+                ),
+                image: "leotolstoy",
+                likes: 10,
+                views: 100
+            ),
+            Post(
+                author: "Medinsky",
+                description: NSLocalizedString(
+                    "post.description.medinsky",
+                    comment: "Sample post description"
+                ),
+                image: "medinsky",
+                likes: 0,
+                views: 1000
+            ),
+            Post(
+                author: "Selhoznadzor",
+                description: NSLocalizedString(
+                    "post.description.selhoznadzor",
+                    comment: "Sample post description"
+                ),
+                image: "rshn",
+                likes: 5,
+                views: 120
+            ),
+            Post(
+                author: "Roskomnadzor",
+                description: NSLocalizedString(
+                    "post.description.roskomnadzor",
+                    comment: "Sample post description"
+                ),
+                image: "rkn",
+                likes: 1,
+                views: 10000
+            )
         ]
         viewModel.setPosts(posts)
     }
@@ -109,7 +151,10 @@ class ProfileViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
+            tableView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: -16
+            )
         ])
     }
 
@@ -133,15 +178,32 @@ class ProfileViewController: UIViewController {
 
             switch result {
             case .success(true):
+                let message = String(
+                    format: NSLocalizedString(
+                        "post.saved.message",
+                        comment: "Confirmation message after saving a post"
+                    ),
+                    post.author
+                )
+
                 self.showAlert(
-                    title: "Понравилось ❤️",
-                    message: "Пост «\(post.author)» сохранён во вкладке Liked"
+                    title: NSLocalizedString(
+                        "post.saved.title",
+                        comment: "Title shown after liking a post"
+                    ),
+                    message: message
                 )
 
             case .success(false):
                 self.showAlert(
-                    title: "Уже сохранено",
-                    message: "Этот пост уже есть во вкладке Liked"
+                    title: NSLocalizedString(
+                        "post.already_saved.title",
+                        comment: "Title shown when a post is already saved"
+                    ),
+                    message: NSLocalizedString(
+                        "post.already_saved.message",
+                        comment: "Message shown when a post is already saved"
+                    )
                 )
 
             case .failure(let error):
@@ -150,32 +212,31 @@ class ProfileViewController: UIViewController {
         }
     }
 
-
     private func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .default)
+        let okAction = UIAlertAction(
+            title: NSLocalizedString("common.ok", comment: "OK button"),
+            style: .default
+        )
         alert.addAction(okAction)
         present(alert, animated: true)
     }
-    
+
     private func showError(_ error: Error) {
         let alert = UIAlertController(
-            title: "Ошибка",
-            message: error.localizedDescription,
+            title: NSLocalizedString("error.generic", comment: "Generic error title"),
+            message: NSLocalizedString("error.generic", comment: "Generic error message"),
             preferredStyle: .alert
         )
 
         alert.addAction(
             UIAlertAction(
-                title: "OK",
+                title: NSLocalizedString("common.ok", comment: "OK button"),
                 style: .default
             )
         )
         present(alert, animated: true)
     }
-
-
-
 }
 
 // MARK: - UITableViewDataSource
@@ -197,10 +258,16 @@ extension ProfileViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 1 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "PhotosCell", for: indexPath) as! PhotosTableViewCell
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: "PhotosCell",
+                for: indexPath
+            ) as! PhotosTableViewCell
             return cell
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as! PostTableViewCell
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: "PostCell",
+                for: indexPath
+            ) as! PostTableViewCell
             cell.configure(with: viewModel.posts[indexPath.row])
             cell.onDoubleTap = { [weak self] post in
                 self?.savePost(post)
@@ -209,7 +276,6 @@ extension ProfileViewController: UITableViewDataSource {
         }
     }
 }
-
 
 // MARK: - UITableViewDelegate
 
@@ -223,7 +289,10 @@ extension ProfileViewController: UITableViewDelegate {
         return section == 0 ? UITableView.automaticDimension : 0
     }
 
-    func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
+    func tableView(
+        _ tableView: UITableView,
+        estimatedHeightForHeaderInSection section: Int
+    ) -> CGFloat {
         return section == 0 ? 220 : 0
     }
 

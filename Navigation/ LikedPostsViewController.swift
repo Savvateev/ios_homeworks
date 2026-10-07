@@ -52,7 +52,7 @@ final class LikedPostsViewController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = .systemBackground
-        title = "Liked"
+        title = NSLocalizedString("liked.title", comment: "Liked posts screen title")
 
         setupNavigationBar()
         setupLayout()
@@ -77,7 +77,10 @@ final class LikedPostsViewController: UIViewController {
             action: #selector(searchButtonTapped)
         )
 
-        searchButton.accessibilityLabel = "Поиск по автору"
+        searchButton.accessibilityLabel = NSLocalizedString(
+            "liked.search.accessibility",
+            comment: "Search button accessibility label"
+        )
 
         let clearFilterButton = UIBarButtonItem(
             image: UIImage(systemName: "xmark.circle"),
@@ -86,7 +89,10 @@ final class LikedPostsViewController: UIViewController {
             action: #selector(clearFilterButtonTapped)
         )
 
-        clearFilterButton.accessibilityLabel = "Очистить фильтр"
+        clearFilterButton.accessibilityLabel = NSLocalizedString(
+            "liked.clear_filter.accessibility",
+            comment: "Clear filter button accessibility label"
+        )
 
         // Кнопка поиска и кнопка очистки фильтра.
         navigationItem.rightBarButtonItems = [
@@ -178,9 +184,15 @@ final class LikedPostsViewController: UIViewController {
 
         if postsCount == 0 {
             if authorFilter == nil {
-                emptyLabel.text = "Нет понравившихся постов"
+                emptyLabel.text = NSLocalizedString(
+                    "liked.empty.all",
+                    comment: "Empty state when there are no liked posts"
+                )
             } else {
-                emptyLabel.text = "Посты указанного автора не найдены"
+                emptyLabel.text = NSLocalizedString(
+                    "liked.empty.author",
+                    comment: "Empty state when no posts match the author filter"
+                )
             }
 
             emptyLabel.isHidden = false
@@ -193,19 +205,28 @@ final class LikedPostsViewController: UIViewController {
 
     @objc private func searchButtonTapped() {
         let alert = UIAlertController(
-            title: "Поиск по автору",
-            message: "Введите имя автора",
+            title: NSLocalizedString(
+                "liked.search.title",
+                comment: "Search by author alert title"
+            ),
+            message: NSLocalizedString(
+                "liked.search.message",
+                comment: "Search by author alert message"
+            ),
             preferredStyle: .alert
         )
 
         alert.addTextField { textField in
-            textField.placeholder = "Например, LeoTolstoy"
+            textField.placeholder = NSLocalizedString(
+                "liked.search.placeholder",
+                comment: "Search by author text field placeholder"
+            )
             textField.autocapitalizationType = .none
             textField.autocorrectionType = .no
         }
 
         let applyAction = UIAlertAction(
-            title: "Применить",
+            title: NSLocalizedString("action.apply", comment: "Apply action"),
             style: .default
         ) { [weak self, weak alert] _ in
 
@@ -226,7 +247,7 @@ final class LikedPostsViewController: UIViewController {
         }
 
         let cancelAction = UIAlertAction(
-            title: "Отмена",
+            title: NSLocalizedString("action.cancel", comment: "Cancel action"),
             style: .cancel
         )
 
@@ -247,14 +268,14 @@ final class LikedPostsViewController: UIViewController {
 
     private func showError(_ error: Error) {
         let alert = UIAlertController(
-            title: "Ошибка",
-            message: error.localizedDescription,
+            title: NSLocalizedString("error.generic", comment: "Generic error title"),
+            message: NSLocalizedString("error.generic", comment: "Generic error message"),
             preferredStyle: .alert
         )
 
         alert.addAction(
             UIAlertAction(
-                title: "OK",
+                title: NSLocalizedString("common.ok", comment: "OK button"),
                 style: .default
             )
         )
@@ -321,7 +342,7 @@ extension LikedPostsViewController: UITableViewDelegate {
 
         let deleteAction = UIContextualAction(
             style: .destructive,
-            title: "Удалить"
+            title: NSLocalizedString("action.delete", comment: "Delete action")
         ) { [weak self] _, _, completion in
 
             guard let self else {
