@@ -1,0 +1,66 @@
+"common.ok" = "OK";
+
+"tab.profile" = "Profile";
+"tab.feed" = "Feed";
+"tab.liked" = "Liked";
+
+"profile.title" = "Profile";
+"profile.empty" = "Nothing here yet";
+"profile.status.placeholder" = "Status";
+"profile.status.set" = "Set status";
+"profile.status.online" = "Online";
+
+"photos.title" = "Photos";
+"photos.section" = "Photos";
+
+"liked.title" = "Liked";
+"liked.search.accessibility" = "Search by author";
+"liked.clear_filter.accessibility" = "Clear filter";
+"liked.empty.all" = "No liked posts";
+"liked.empty.author" = "No posts found for this author";
+"liked.search.title" = "Search by author";
+"liked.search.message" = "Enter the author's name";
+"liked.search.placeholder" = "For example, LeoTolstoy";
+"action.apply" = "Apply";
+"action.cancel" = "Cancel";
+"action.delete" = "Delete";
+
+"feed.title" = "Feed";
+"feed.empty.title" = "Feed";
+"feed.empty.message" = "Your feed is empty. There are no posts yet.";
+"feed.word.placeholder" = "Enter a word";
+"feed.check.button" = "Check";
+"feed.result.waiting" = "Waiting for input...";
+"feed.result.enter_word" = "Enter a word!";
+"feed.result.correct" = "✅ Correct!";
+"feed.result.wrong" = "❌ Incorrect!";
+
+"info.button" = "Show alert";
+"info.alert.title" = "Attention";
+"info.alert.message" = "Continue?";
+"info.alert.yes" = "Yes";
+"info.alert.no" = "No";
+
+"login.email.placeholder" = "Email or phone";
+"login.password.placeholder" = "Password";
+"login.button" = "Log In";
+"login.error.title" = "Error";
+"login.error.email_required" = "Enter your email address";
+"login.error.password_required" = "Enter your password";
+"login.error.service_unavailable" = "The authentication service is unavailable";
+"login.error.signin_title" = "Sign-in error";
+"login.error.signin_message" = "Unable to sign in. Check your details and network connection.";
+"login.error.signup_title" = "Sign-up error";
+"login.error.signup_message" = "Unable to sign up. Please try again.";
+
+"error.generic" = "Something went wrong. Please try again.";
+
+"post.saved.title" = "Liked ❤️";
+"post.saved.message" = "“%@” was saved to the Liked tab";
+"post.already_saved.title" = "Already saved";
+"post.already_saved.message" = "This post is already in the Liked tab";
+
+"post.description.leo" = "I'm writing a new novel";
+"post.description.medinsky" = "I'm rewriting history";
+"post.description.selhoznadzor" = "I'm banning Armenian trout";
+"post.description.roskomnadzor" = "I'm blocking the internet";

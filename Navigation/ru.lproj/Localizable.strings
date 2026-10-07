@@ -1,0 +1,66 @@
+"common.ok" = "ОК";
+
+"tab.profile" = "Профиль";
+"tab.feed" = "Лента";
+"tab.liked" = "Избранное";
+
+"profile.title" = "Профиль";
+"profile.empty" = "Здесь пока ничего нет";
+"profile.status.placeholder" = "Статус";
+"profile.status.set" = "Новый статус";
+"profile.status.online" = "В сети";
+
+"photos.title" = "Фотографии";
+"photos.section" = "Фотографии";
+
+"liked.title" = "Избранное";
+"liked.search.accessibility" = "Поиск по автору";
+"liked.clear_filter.accessibility" = "Очистить фильтр";
+"liked.empty.all" = "Нет понравившихся постов";
+"liked.empty.author" = "Посты указанного автора не найдены";
+"liked.search.title" = "Поиск по автору";
+"liked.search.message" = "Введите имя автора";
+"liked.search.placeholder" = "Например, LeoTolstoy";
+"action.apply" = "Применить";
+"action.cancel" = "Отмена";
+"action.delete" = "Удалить";
+
+"feed.title" = "Лента";
+"feed.empty.title" = "Лента";
+"feed.empty.message" = "Лента пуста. Пока нет публикаций.";
+"feed.word.placeholder" = "Введите слово";
+"feed.check.button" = "Проверить";
+"feed.result.waiting" = "Ожидание ввода...";
+"feed.result.enter_word" = "Введите слово!";
+"feed.result.correct" = "✅ Верно!";
+"feed.result.wrong" = "❌ Неверно!";
+
+"info.button" = "Показать предупреждение";
+"info.alert.title" = "Внимание";
+"info.alert.message" = "Продолжить?";
+"info.alert.yes" = "Да";
+"info.alert.no" = "Нет";
+
+"login.email.placeholder" = "Электронная почта или телефон";
+"login.password.placeholder" = "Пароль";
+"login.button" = "Войти";
+"login.error.title" = "Ошибка";
+"login.error.email_required" = "Введите адрес электронной почты";
+"login.error.password_required" = "Введите пароль";
+"login.error.service_unavailable" = "Сервис проверки недоступен";
+"login.error.signin_title" = "Ошибка входа";
+"login.error.signin_message" = "Не удалось войти. Проверьте данные и подключение к сети.";
+"login.error.signup_title" = "Ошибка регистрации";
+"login.error.signup_message" = "Не удалось зарегистрироваться. Попробуйте ещё раз.";
+
+"error.generic" = "Не удалось выполнить операцию. Попробуйте ещё раз.";
+
+"post.saved.title" = "Понравилось ❤️";
+"post.saved.message" = "Пост «%@» сохранён во вкладке «Избранное»";
+"post.already_saved.title" = "Уже сохранено";
+"post.already_saved.message" = "Этот пост уже есть во вкладке «Избранное»";
+
+"post.description.leo" = "Пишу новый роман";
+"post.description.medinsky" = "Переписываю историю";
+"post.description.selhoznadzor" = "Запрещаю армянскую форель";
+"post.description.roskomnadzor" = "Блокирую интернет";
