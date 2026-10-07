@@ -1,20 +1,17 @@
-//
-//  FeedViewModel.swift
-//  Navigation
-//
-//  Created by Pavel Savvateev on 07.10.2026.
-//
-
-
 import Foundation
 
 final class FeedViewModel {
 
+    enum ViewInput {
+        case checkButtonDidTap
+        case pushButtonDidTap
+    }
+
     enum State: Equatable {
         case waiting
-        case emptyInput
-        case correct
-        case incorrect
+        case checking
+        case checked(result: Bool)
+        case error(error: FeedError)
     }
 
     private let feedModel: FeedModelProtocol
@@ -25,12 +22,28 @@ final class FeedViewModel {
         self.feedModel = feedModel
     }
 
-    func check(word: String) {
-        guard !word.isEmpty else {
-            state = .emptyInput
-            return
-        }
+    func updateState(viewInput: ViewInput, text: String) {
+        switch viewInput {
+        case .checkButtonDidTap:
+            state = .checking
 
-        state = feedModel.check(word: word) ? .correct : .incorrect
+            feedModel.check(word: text) { [weak self] result in
+                switch result {
+                case .success(let isCorrect):
+                    self?.state = .checked(result: isCorrect)
+
+                case .failure(let error):
+                    self?.state = .error(error: error)
+                }
+            }
+
+        case .pushButtonDidTap:
+            break
+        }
+    }
+
+    // Можно оставить для совместимости с вызовом из FeedViewController.
+    func check(word: String) {
+        updateState(viewInput: .checkButtonDidTap, text: word)
     }
 }

@@ -162,29 +162,37 @@ class FeedViewController: UIViewController {
         viewModel.check(word: guessTextField.text ?? "")
 
         switch viewModel.state {
-        case .waiting:
+        case .waiting, .checking:
             break
 
-        case .emptyInput:
-            resultLabel.text = NSLocalizedString(
-                "feed.result.enter_word",
-                comment: "Message shown when no word was entered"
-            )
-            resultLabel.textColor = .orange
-
-        case .correct:
+        case .checked(result: true):
             resultLabel.text = NSLocalizedString(
                 "feed.result.correct",
                 comment: "Correct answer message"
             )
             resultLabel.textColor = .systemGreen
 
-        case .incorrect:
+        case .checked(result: false):
             resultLabel.text = NSLocalizedString(
                 "feed.result.wrong",
                 comment: "Incorrect answer message"
             )
             resultLabel.textColor = .systemRed
+
+        case .error(error: .emptyText):
+            resultLabel.text = NSLocalizedString(
+                "feed.result.enter_word",
+                comment: "Message shown when no word was entered"
+            )
+            resultLabel.textColor = .orange
+
+        case .error(error: .invalidText):
+            resultLabel.text = NSLocalizedString(
+                "feed.result.wrong",
+                comment: "Message shown for invalid input"
+            )
+            resultLabel.textColor = .systemRed
         }
     }
+
 }
