@@ -36,7 +36,8 @@ final class FeedModel: FeedModelProtocol {
             return
         }
 
-        let isCorrect = trimmedWord.lowercased() == secretWord.lowercased()
-        completion(.success(isCorrect))
+        completion(
+            .success(trimmedWord.lowercased() == secretWord.lowercased())
+        )
     }
 }

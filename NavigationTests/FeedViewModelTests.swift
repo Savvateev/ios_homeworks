@@ -3,11 +3,21 @@ import XCTest
 
 final class FeedViewModelTests: XCTestCase {
 
-    func testSuccessTrueSetsCheckedTrueState() {
-        let model = FeedModelMock()
-        model.fakeResult = .success(true)
+    private var viewModel: FeedViewModel!
 
-        let viewModel = FeedViewModel(feedModel: model)
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+
+        let realModel = FeedModel(secretWord: "password")
+        viewModel = FeedViewModel(feedModel: realModel)
+    }
+
+    override func tearDownWithError() throws {
+        viewModel = nil
+        try super.tearDownWithError()
+    }
+
+    func testCorrectSecretWordSetsCheckedTrueState() {
         viewModel.updateState(
             viewInput: .checkButtonDidTap,
             text: "password"
@@ -16,24 +26,16 @@ final class FeedViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.state, .checked(result: true))
     }
 
-    func testSuccessFalseSetsCheckedFalseState() {
-        let model = FeedModelMock()
-        model.fakeResult = .success(false)
-
-        let viewModel = FeedViewModel(feedModel: model)
+    func testDifferentWordSetsCheckedFalseState() {
         viewModel.updateState(
             viewInput: .checkButtonDidTap,
-            text: "wrong"
+            text: "anotherword"
         )
 
         XCTAssertEqual(viewModel.state, .checked(result: false))
     }
 
-    func testEmptyTextErrorSetsErrorState() {
-        let model = FeedModelMock()
-        model.fakeResult = .failure(.emptyText)
-
-        let viewModel = FeedViewModel(feedModel: model)
+    func testEmptyInputSetsEmptyTextErrorState() {
         viewModel.updateState(
             viewInput: .checkButtonDidTap,
             text: ""
@@ -42,28 +44,12 @@ final class FeedViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.state, .error(error: .emptyText))
     }
 
-    func testInvalidTextErrorSetsErrorState() {
-        let model = FeedModelMock()
-        model.fakeResult = .failure(.invalidText)
-
-        let viewModel = FeedViewModel(feedModel: model)
+    func testInputWithNonLettersSetsInvalidTextErrorState() {
         viewModel.updateState(
             viewInput: .checkButtonDidTap,
-            text: "pass123"
+            text: "password123"
         )
 
         XCTAssertEqual(viewModel.state, .error(error: .invalidText))
-    }
-}
-
-private final class FeedModelMock: FeedModelProtocol {
-
-    var fakeResult: Result<Bool, FeedError> = .success(false)
-
-    func check(
-        word: String,
-        completion: @escaping (Result<Bool, FeedError>) -> Void
-    ) {
-        completion(fakeResult)
     }
 }

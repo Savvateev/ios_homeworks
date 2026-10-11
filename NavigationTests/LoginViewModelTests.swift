@@ -1,73 +1,17 @@
-//
-//  LoginViewModelTests.swift
-//  Navigation
-//
-//  Created by Pavel Savvateev on 07.10.2026.
-//
-
-
 import XCTest
 @testable import Navigation
 
 final class LoginViewModelTests: XCTestCase {
 
-    func testLoginSucceedsWithoutSignUpWhenCredentialsAreValid() {
-        let service = LoginServiceMock()
-        let viewModel = makeViewModel(service: service)
+    private var service: LoginServiceMock!
+    private var viewModel: LoginViewModel!
 
-        let result = login(viewModel)
+    override func setUpWithError() throws {
+        try super.setUpWithError()
 
-        XCTAssertTrue(isSuccess(result))
-        XCTAssertEqual(service.checkCredentialsCallCount, 1)
-        XCTAssertEqual(service.signUpCallCount, 0)
-    }
+        service = LoginServiceMock()
 
-    func testLoginAttemptsSignUpAfterInvalidCredentials() {
-        let service = LoginServiceMock()
-        service.credentialsResult = .failure(makeError(code: 401))
-        let viewModel = makeViewModel(service: service)
-
-        let result = login(viewModel)
-
-        XCTAssertTrue(isSuccess(result))
-        XCTAssertEqual(service.checkCredentialsCallCount, 1)
-        XCTAssertEqual(service.signUpCallCount, 1)
-    }
-
-    func testLoginReturnsFailureForOtherCredentialErrors() {
-        let service = LoginServiceMock()
-        service.credentialsResult = .failure(makeError(code: 500))
-        let viewModel = makeViewModel(service: service)
-
-        let result = login(viewModel)
-
-        XCTAssertEqual(service.signUpCallCount, 0)
-
-        guard case .failure(let error) = result else {
-            return XCTFail("Expected login to fail")
-        }
-
-        XCTAssertEqual((error as NSError).code, 500)
-    }
-
-    func testLoginSucceedsWhenSignUpReportsExistingUser() {
-        let service = LoginServiceMock()
-        service.credentialsResult = .failure(makeError(code: 401))
-        service.signUpResult = .failure(makeError(code: 409))
-        let viewModel = makeViewModel(service: service)
-
-        let result = login(viewModel)
-
-        XCTAssertTrue(isSuccess(result))
-        XCTAssertEqual(service.signUpCallCount, 1)
-    }
-
-    // MARK: - Helpers
-
-    private func makeViewModel(
-        service: LoginServiceMock
-    ) -> LoginViewModel {
-        LoginViewModel(
+        viewModel = LoginViewModel(
             service: service,
             shouldAttemptSignUp: { error in
                 (error as NSError).code == 401
@@ -78,12 +22,81 @@ final class LoginViewModelTests: XCTestCase {
         )
     }
 
-    private func login(
-        _ viewModel: LoginViewModel
-    ) -> Result<Void, Error>? {
+    override func tearDownWithError() throws {
+        viewModel = nil
+        service = nil
+        try super.tearDownWithError()
+    }
+
+    func testSuccessfulLoginDoesNotAttemptSignUp() {
+        service.credentialsResult = .success(())
+
+        let result = login()
+
+        XCTAssertTrue(isSuccess(result))
+        XCTAssertEqual(service.checkCredentialsCallCount, 1)
+        XCTAssertEqual(service.signUpCallCount, 0)
+    }
+
+    func testInvalidCredentialsAttemptSignUp() {
+        service.credentialsResult = .failure(makeError(code: 401))
+        service.signUpResult = .success(())
+
+        let result = login()
+
+        XCTAssertTrue(isSuccess(result))
+        XCTAssertEqual(service.checkCredentialsCallCount, 1)
+        XCTAssertEqual(service.signUpCallCount, 1)
+    }
+
+    func testOtherLoginErrorIsReturnedWithoutSignUp() {
+        let expectedErrorCode = 500
+        service.credentialsResult = .failure(makeError(code: expectedErrorCode))
+
+        let result = login()
+
+        XCTAssertEqual(service.signUpCallCount, 0)
+
+        guard case .failure(let error) = result else {
+            return XCTFail("Ожидалась ошибка входа")
+        }
+
+        XCTAssertEqual((error as NSError).code, expectedErrorCode)
+    }
+
+    func testAlreadyRegisteredUserIsTreatedAsSuccessfulLogin() {
+        service.credentialsResult = .failure(makeError(code: 401))
+        service.signUpResult = .failure(makeError(code: 409))
+
+        let result = login()
+
+        XCTAssertTrue(isSuccess(result))
+        XCTAssertEqual(service.signUpCallCount, 1)
+    }
+
+    func testSignUpErrorIsReturned() {
+        let expectedErrorCode = 500
+        service.credentialsResult = .failure(makeError(code: 401))
+        service.signUpResult = .failure(makeError(code: expectedErrorCode))
+
+        let result = login()
+
+        guard case .failure(let error) = result else {
+            return XCTFail("Ожидалась ошибка регистрации")
+        }
+
+        XCTAssertEqual((error as NSError).code, expectedErrorCode)
+    }
+
+    // MARK: - Helpers
+
+    private func login() -> Result<Void, Error>? {
         var result: Result<Void, Error>?
 
-        viewModel.login(email: "test@example.com", password: "password") {
+        viewModel.login(
+            email: "test@example.com",
+            password: "password"
+        ) {
             result = $0
         }
 

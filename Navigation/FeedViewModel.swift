@@ -42,8 +42,10 @@ final class FeedViewModel {
         }
     }
 
-    // Можно оставить для совместимости с вызовом из FeedViewController.
     func check(word: String) {
-        updateState(viewInput: .checkButtonDidTap, text: word)
+        updateState(
+            viewInput: .checkButtonDidTap,
+            text: word
+        )
     }
 }
